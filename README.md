@@ -13,7 +13,7 @@ import tkinter as tk
 def main():
     # Create a window.
     root = tk.Tk()
-    root.title("Hello World")
+    root.title("Hello, World!")
     root.pack_propagate(0)
 
     # Add some text.
@@ -36,7 +36,7 @@ import tks
 
 def main():
     # Create a window.
-    root = tks.Window("Hello World")
+    root = tks.Window("Hello, World!")
 
     # Add some text.
     root.add(tk.Label, text="This is some text.")
@@ -48,3 +48,62 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+On Windows systems, both programs above will output a window resembling the following:
+#![Basic Window](../media/images/before.jpg)
+
+# CSS Stylesheets
+
+All it takes to style elements with tks is a CSS file and a `Stylesheet` object. Consider the following code:
+
+```python
+import tkinter as tk
+import tks
+
+
+def main():
+    # Define a stylesheet and main window.
+    stylesheet = tks.Stylesheet("./main.css")
+    root = tks.Window("Test!", stylesheet)
+
+    # Add a button and give it some functionality.
+    btn = root.add(tk.Button, text="Click me!")
+    btn.bind("<Button-1>", lambda _: print("Hello, World!"))
+
+    # Add some text.
+    root.add(tk.Label, text="This is text!")
+    root.add(tk.Label, text="This is some more text!")
+
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+And the following CSS stylesheet:
+
+```css
+Window {
+    background: #333;
+    width: 300;
+    height: 120;
+}
+
+Button {
+    background: #0ac;
+    border-style: flat;
+    color: #000
+}
+
+Label {
+    background: #333;
+    border-style: flat;
+    border-width: 2;
+    color: #ddd;
+}
+```
+
+The above code outputs the following window:
+![Styled Window](../media/images/after.jpg)
