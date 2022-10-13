@@ -1,0 +1,18 @@
+Window {
+    background: #333;
+    width: 300;
+    height: 120;
+}
+
+Button {
+    background: #0ac;
+    border-style: flat;
+    color: #000
+}
+
+Label {
+    background: #333;
+    border-style: flat;
+    border-width: 2;
+    color: #ddd;
+}
