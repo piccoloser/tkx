@@ -50,7 +50,8 @@ if __name__ == "__main__":
 ```
 
 On Windows systems, both programs above will output a window resembling the following:
-#![Basic Window](../media/images/before.jpg)
+
+![Basic Window](../media/images/before.jpg)
 
 # CSS Stylesheets
 
@@ -105,5 +106,6 @@ Label {
 }
 ```
 
-The above code outputs the following window:
+The above code outputs the following:
+
 ![Styled Window](../media/images/after.jpg)
