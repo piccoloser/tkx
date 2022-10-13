@@ -20,22 +20,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-import tkinter as tk
-import tks
-
-
-# def main():
-#     # Create a window.
-#     stylesheet = tks.Stylesheet("./main.css")
-#     root = tks.Window("Hello World", stylesheet)
-
-#     # Add some text.
-#     root.add(tk.Label, text="This is some text.")
-
-#     # Run the application.
-#     root.mainloop()
-
-
-# if __name__ == "__main__":
-#     main()
