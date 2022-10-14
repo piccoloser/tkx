@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
 On Windows systems, both programs above will output a window resembling the following:
 
-![Basic Window](../media/images/before.jpg)
+![Standard tkinter window with bright background and black text](../media/images/before.jpg)
 
 # CSS Stylesheets
 
@@ -110,4 +110,29 @@ Label {
 
 The above code outputs the following:
 
-![Styled Window](../media/images/after.jpg)
+![Dark gray window with a blue button and white text](../media/images/after.jpg)
+
+# Development Roadmap
+
+## v0.1.0
+
+### CSS
+* Support for most commonly used tkinter widgets
+* Style blocks apply to all child and grandchild elements
+* Reusable CSS variables
+
+### tks
+* Improved `Window` implementation
+* Generalized `Element` implementation
+
+## v0.2.0
+
+### CSS
+* Support for id and class (`cl`) selectors
+* Basic `display` layout support
+
+### tks
+* Key event translations
+* Separate default and minimal `Window` implementations
+
+## End of currently planned features
