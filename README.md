@@ -86,6 +86,8 @@ if __name__ == "__main__":
 And the following CSS stylesheet:
 
 ```css
+/* main.css */
+
 Window {
     background: #333;
     width: 300;
