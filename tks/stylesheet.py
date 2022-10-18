@@ -36,7 +36,7 @@ class Stylesheet:
             self.styles[selector] = self.parse_block(block)
 
     def format_properties(self, properties: dict[str, str]) -> dict[str, str]:
-        return {k: self.var(v) for k, v in properties.items()}
+        return {k: self.var(str(v)) for k, v in properties.items()}
 
     def get(self, name: str) -> Optional[str]:
         """
