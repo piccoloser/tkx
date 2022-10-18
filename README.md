@@ -26,7 +26,7 @@ def main():
 if __name__ == "__main__":
     main()
 ```
-*Note: `root.pack_propagate(0)` is used to prevent the window from resizing to match the size of the `tk.Label` object. This is the default behavior in tks, as is show below.*
+*Note: `root.pack_propagate(0)` is used to prevent the window from resizing to match the size of the `tk.Label` object. This is the default behavior in tks, as shown below.*
 
 ### With tks
 ```python
@@ -88,23 +88,29 @@ And the following CSS stylesheet:
 ```css
 /* main.css */
 
+:root {
+    --bg: #333;
+    --fg: #ddd;
+    --blue: #0ac;
+}
+
 Window {
-    background: #333;
+    background: var(--bg);
     width: 300;
     height: 120;
 }
 
 Button {
-    background: #0ac;
+    background: var(--blue);
     border-style: flat;
-    color: #000
+    color: black;
 }
 
 Label {
-    background: #333;
+    background: var(--bg);
     border-style: flat;
     border-width: 2;
-    color: #ddd;
+    color: var(--fg);
 }
 ```
 

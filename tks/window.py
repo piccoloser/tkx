@@ -1,3 +1,4 @@
+from tks.constants import NON_STYLE_CONFIG_OPTIONS
 from tks.dbg import dbg
 from tks.element import Element
 from tks.stylesheet import Stylesheet
@@ -18,6 +19,7 @@ class Window(tk.Tk):
         self.elements = None
         self.stylesheet = stylesheet
         self.width, self.height, self.x, self.y = re.split("[x+]", self.geometry())
+        self.style = None
 
         if stylesheet is not None:
             if stylesheet.get("Window"):
@@ -37,6 +39,24 @@ class Window(tk.Tk):
 
         return element
 
+    def configure(self, **kwargs):
+        if self.style is None:
+            self.style = dict()
+
+        kwargs = self.stylesheet.format_properties(kwargs)
+        self.style.update(kwargs)
+
+        # Remove keys not associated with style from `self.style`.
+        self.style = dict(
+            filter(
+                lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS,
+                self.style.items(),
+            )
+        )
+
+        # Apply window properties.
+        super().configure(**kwargs)
+        
     def get_style_of(self, name: str) -> Optional[dict[str, str]]:
         """
         Return the CSS block associated with `name` or `None` if

@@ -17,14 +17,15 @@
 */
 
 :root {
-    --red: #a22;
+    --bg: #333;
     --fg: #ddd;
+    --red: #a22;
     --green: #082;
     --blue: #0ac;
 }
 
 Window {
-    background: #333;
+    background: var(--bg);
     width: 300;
     height: 120;
 }
@@ -32,13 +33,13 @@ Window {
 Button {
     background: var(--red);
     border-style: flat;
-    color: var(--fg);
+    color: black;
     cursor: hand2;
 }
 
 Label {
-    background: #333;
+    background: var(--bg);
     border-style: flat;
     border-width: 2;
-    color: #ddd;
+    color: var(--fg);
 }
