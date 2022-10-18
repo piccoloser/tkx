@@ -15,6 +15,11 @@ def main():
     root.add(tk.Label, text="This is text!")
     root.add(tk.Label, text="This is some more text!")
 
+    frm = root.add(tk.Frame)
+    btn2 = frm.add(tk.Button, text="Click me!")
+    btn2.bind("<Button-1>", lambda _: print("Hello again!"))
+    btn2.configure(bg="#082", fg="#fff", id=2)
+
     root.mainloop()
 
 

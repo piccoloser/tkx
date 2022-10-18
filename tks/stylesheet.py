@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 import re
 
 
@@ -42,8 +43,12 @@ class Stylesheet:
         for selector, block in zip(self.get_selectors(), self.get_blocks()):
             self.styles[selector] = self.parse_block(block)
 
-    def get(self, property: str) -> str | None:
-        return self.styles.get(property)
+    def get(self, name: str) -> Optional[str]:
+        """
+        Return the CSS block associated with
+        `name` or `None` if it does not exist.
+        """
+        return self.styles.get(name)
 
     def get_blocks(self) -> tuple[str]:
         """Return a list of blocks found in the stylesheet."""
@@ -52,6 +57,10 @@ class Stylesheet:
 
         # Remove any leftover curly braces and return the result.
         return (*map(lambda i: re.sub(MATCH_BRACES, "", i), result),)
+
+    def get_property(self, widget_name: str, property: str) -> Optional[str]:
+        """Return the value of a property given a selector and property name."""
+        return self.styles[widget_name].get(property)
 
     def get_selectors(self) -> tuple[str]:
         """Return a list of selectors found in the stylesheet."""

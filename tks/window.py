@@ -12,7 +12,7 @@ class Window(tk.Tk):
         super().update()
         super().title(title)
 
-        # # Prevent child elements from resizing main window.
+        # Prevent child elements from resizing the main window.
         self.pack_propagate(0)
 
         self.elements = None
@@ -31,10 +31,17 @@ class Window(tk.Tk):
 
         element = Element(widget, self, **kwargs)
         self.elements.append(element)
+
+        # This will likely change in the future.
         element.widget.pack()
+
         return element
 
-    def get_style(self, name: str) -> Optional[dict[str, str]]:
+    def get_style_of(self, name: str) -> Optional[dict[str, str]]:
+        """
+        Return the CSS block associated with `name` or `None` if
+        either the CSS block or the stylesheet does not exist.
+        """
         if self.stylesheet is None:
             return None
 

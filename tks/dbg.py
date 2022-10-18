@@ -2,6 +2,13 @@ from os import environ
 
 
 def dbg(fn):
+    """
+    Decorator assigned to a function in order to view
+    its positional and keyword arguments when called.
+    Only works when the DEBUG environment variable is
+    equal to "true".
+    """
+
     def wrapper(*args, **kwargs):
         if environ.get("DEBUG") == "true":
             print(

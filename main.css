@@ -1,3 +1,27 @@
+/* 
+    Common Cursors:
+    - all-scroll: fleur;
+    - cell: plus;
+    - crosshair: crosshair;
+    - default: left_ptr;
+    - help: question_arrow;
+    - move: fleur;
+    - pointer: hand2;
+    - resize:
+        - n: sb_v_double_arrow;
+        - s: sb_v_double_arrow;
+        - e: sb_h_double_arrow;
+        - w: sb_h_double_arrow;
+    - text: xterm;
+    - wait: watch;
+*/
+
+/* :root {
+    --red: #a22;
+    --green: #082;
+    --blue: #0ac;
+} */
+
 Window {
     background: #333;
     width: 300;
@@ -7,7 +31,8 @@ Window {
 Button {
     background: #0ac;
     border-style: flat;
-    color: #000
+    color: #000;
+    cursor: hand2;
 }
 
 Label {

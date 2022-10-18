@@ -15,7 +15,7 @@ class Element:
         self.id = kwargs.pop("id", None)
         self.cl = kwargs.pop("cl", None)
 
-        self.elements = None
+        self.elements: Optional[list[Element]] = None
         self.parent = parent
 
         if isinstance(parent, Element):
@@ -28,7 +28,12 @@ class Element:
             case "Frame":
                 fallback = "Window"
 
-        self.configure(**self.get_style(widget.__name__, fallback))
+        # Create a new copy of the stylesheet associated with
+        # this Element or some fallback Element, then configure
+        # the element.
+        self.style = dict(self.get_style_of(widget.__name__, fallback))
+        if self.style is not None:
+            self.configure(**self.style)
 
     @dbg
     def add(self, widget: tk.Widget, **kwargs) -> Element:
@@ -43,27 +48,29 @@ class Element:
 
     @dbg
     def bind(self, *args):
+        """Bind an event and handler to an `Element`'s widget."""
         self.widget.bind(*args)
 
     @dbg
     def configure(self, **kwargs):
+        """Configure properties of an `Element` and its widget."""
+        print(self.widget)
         for p in ("cl", "id"):
             if kwargs.get(p, None) is not None:
-                self.__dict__[p] = kwargs[p]
+                self.__dict__[p] = kwargs.pop(p)
 
         if kwargs:
+            self.style.update(kwargs)
             self.widget.configure(**kwargs)
 
     @dbg
-    def get_style(
+    def get_style_of(
         self, name: str, fallback: Optional[str] = None
-    ) -> Optional[Stylesheet]:
-        return self.parent.get_style(name) or self.parent.get_style(fallback)
-
-    @property
-    def parent(self) -> tk.Widget or Element:
-        return self.__parent
-
-    @parent.setter
-    def parent(self, item: tk.Widget or Element) -> None:
-        self.__parent = item
+    ) -> Optional[dict[str, str]]:
+        """
+        Return the CSS block associated with `name` or `None`
+        if it does not exist. An optional `fallback` selector
+        can be provided in order to borrow another `Element`'s
+        style block instead.
+        """
+        return self.parent.get_style_of(name) or self.parent.get_style_of(fallback)
