@@ -1,12 +1,11 @@
-from tks.constants import NON_STYLE_CONFIG_OPTIONS
-from tks.dbg import dbg
-from tks.element import Element
+from tks.core import parse_css_vars, tks_element
 from tks.stylesheet import Stylesheet
 from typing import Optional
 import re
 import tkinter as tk
 
 
+@tks_element
 class Window(tk.Tk):
     def __init__(self, title: str = "", stylesheet: Optional[Stylesheet] = None):
         super().__init__()
@@ -25,47 +24,6 @@ class Window(tk.Tk):
             if stylesheet.get("Window"):
                 self.configure(**self.stylesheet.get("Window"))
 
-    @dbg
-    def add(self, widget: tk.Widget, **kwargs) -> Element:
-        """Add a new child Element to this Window."""
-        if self.elements is None:
-            self.elements = []
-
-        element = Element(widget, self, **kwargs)
-        self.elements.append(element)
-
-        # This will likely change in the future.
-        element.widget.pack()
-
-        return element
-
+    @parse_css_vars
     def configure(self, **kwargs):
-        if self.style is None:
-            self.style = dict()
-
-        kwargs = self.stylesheet.format_properties(kwargs)
-        self.style.update(kwargs)
-
-        # Remove keys not associated with style from `self.style`.
-        self.style = dict(
-            filter(
-                lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS,
-                self.style.items(),
-            )
-        )
-
-        # Apply window properties.
         super().configure(**kwargs)
-
-    def get_style_of(self, name: str) -> Optional[dict[str, str]]:
-        """
-        Return the CSS block associated with `name` or `None` if
-        either the CSS block or the stylesheet does not exist.
-        """
-        if self.stylesheet is None:
-            return None
-
-        return self.stylesheet.get(name)
-
-    def root(self):
-        return self

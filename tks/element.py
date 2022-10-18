@@ -1,17 +1,13 @@
 from __future__ import annotations
-from tks.constants import NON_STYLE_CONFIG_OPTIONS
+from tks.core import parse_css_vars, tks_element
 from tks.dbg import dbg
 from typing import Optional
 import tkinter as tk
 
 
+@tks_element
 class Element:
-    def __init__(
-        self,
-        widget: tk.Widget,
-        parent: tk.Widget,
-        **kwargs,
-    ):
+    def __init__(self, widget: tk.Widget, parent: tk.Widget, **kwargs):
         self.id = kwargs.pop("id", None)
         self.cl = kwargs.pop("cl", None)
 
@@ -36,56 +32,15 @@ class Element:
             self.configure(**self.style)
 
     @dbg
-    def add(self, widget: tk.Widget, **kwargs) -> Element:
-        """Add a new child Element to this Element."""
-        if self.elements is None:
-            self.elements = []
-
-        element = Element(widget, self, **kwargs)
-        self.elements.append(element)
-        element.widget.pack()
-        return element
-
-    @dbg
     def bind(self, *args):
         """Bind an event and handler to an `Element`'s widget."""
         self.widget.bind(*args)
 
-    @dbg
+    @parse_css_vars
     def configure(self, **kwargs):
         """Configure properties of an `Element` and its widget."""
         for p in ("cl", "id"):
             if kwargs.get(p, None) is not None:
                 self.__dict__[p] = kwargs.pop(p)
 
-        if kwargs:
-            # Replace `var(...)` values with their actual value.
-            kwargs = self.root().stylesheet.format_properties(kwargs)
-
-            self.style.update(kwargs)
-
-            # Remove keys not associated with style from `self.style`.
-            self.style = dict(
-                filter(
-                    lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS,
-                    self.style.items(),
-                )
-            )
-
-            # Apply widget properties.
-            self.widget.configure(**kwargs)
-
-    @dbg
-    def get_style_of(
-        self, name: str, fallback: Optional[str] = None
-    ) -> Optional[dict[str, str]]:
-        """
-        Return the CSS block associated with `name` or `None`
-        if it does not exist. An optional `fallback` selector
-        can be provided in order to borrow another `Element`'s
-        style block instead.
-        """
-        return self.parent.get_style_of(name) or self.parent.get_style_of(fallback)
-
-    def root(self) -> Optional[tk.Widget]:
-        return self.parent.root()
+        self.widget.configure(**kwargs)
