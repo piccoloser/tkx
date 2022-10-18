@@ -123,12 +123,12 @@ The above code outputs the following:
 ## v0.1.0
 
 ### CSS
-* Support for most commonly used tkinter widgets
+* Support for most commonly used tkinter widgets &check;
 * Style blocks apply to all child and grandchild elements &check;
 * Reusable CSS variables &check;
 
 ### tks
-* Improved `Window` implementation
+* Improved `Window` implementation &check;
 * Generalized `Element` implementation &check;
 
 ## v0.2.0
@@ -138,6 +138,7 @@ The above code outputs the following:
 * Basic `display` layout support
 
 ### tks
+* Simpler implementation of `tk.Menu`
 * Key event translations
 * Separate default and minimal `Window` implementations
 

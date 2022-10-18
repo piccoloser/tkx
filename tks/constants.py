@@ -11,11 +11,13 @@ MATCH_VAR_NAME = r"--\w+"
 NON_STYLE_CONFIG_OPTIONS: set[str] = {
     "command",
     "default",
+    "from_",
     "repeatdelay",
     "repeatinterval",
     "takefocus",
     "text",
     "textvariable",
+    "to",
 }
 
 # Property name translations.
