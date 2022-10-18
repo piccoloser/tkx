@@ -1,4 +1,5 @@
 from __future__ import annotations
+from tks.constants import NON_STYLE_CONFIG_OPTIONS
 from tks.dbg import dbg
 from typing import Optional
 import re
@@ -59,11 +60,20 @@ class Element:
                 self.__dict__[p] = kwargs.pop(p)
 
         if kwargs:
-            for k, v in kwargs.items():
-                if v.startswith("var"):
-                    kwargs[k] = self.root().stylesheet.var(v)
+            # Replace `var(...)` values with their actual value.
+            kwargs = self.root().stylesheet.format_properties(kwargs)
 
             self.style.update(kwargs)
+
+            # Remove keys not associated with style from `self.style`.
+            self.style = dict(
+                filter(
+                    lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS,
+                    self.style.items(),
+                )
+            )
+
+            # Apply widget properties.
             self.widget.configure(**kwargs)
 
     @dbg

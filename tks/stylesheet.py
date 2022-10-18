@@ -1,16 +1,15 @@
 from pathlib import Path
+from tks.constants import (
+    MATCH_BLOCK,
+    MATCH_BRACES,
+    MATCH_COMMENT,
+    MATCH_DELIMITER_SPACE,
+    MATCH_SELECTOR,
+    MATCH_SPACE,
+    MATCH_VAR_NAME,
+)
 from typing import Optional
 import re
-
-
-# Regular expressions to help parse CSS.
-MATCH_COMMENT = r"/\*.+?\*/"
-MATCH_BLOCK = r"\{.*?\}"
-MATCH_BRACES = r"[\{\}]"
-MATCH_DELIMITER_SPACE = r"(?<=[:,])\s"
-MATCH_SELECTOR = r"[:\w\.#\-]+\{"
-MATCH_SPACE = r"\s"
-MATCH_VAR_NAME = r"--\w+"
 
 
 # Property name translations.
@@ -44,6 +43,9 @@ class Stylesheet:
         # Parse and store the minified CSS into `self.styles`.
         for selector, block in zip(self.get_selectors(), self.get_blocks()):
             self.styles[selector] = self.parse_block(block)
+
+    def format_properties(self, properties: dict[str, str]) -> dict[str, str]:
+        return {k: self.var(v) for k, v in properties.items()}
 
     def get(self, name: str) -> Optional[str]:
         """
@@ -109,7 +111,11 @@ class Stylesheet:
             filter(lambda k: results.get(k) is None, translated_results.items())
         )
 
-    def var(self, name: str) -> Optional[str]:
+    def var(self, value: str) -> Optional[str]:
         """Return the value associated with a given variable name."""
-        name = re.findall(MATCH_VAR_NAME, name)[0]
-        return self.get_property(":root", name)
+        name = re.findall(MATCH_VAR_NAME, value)
+
+        if not name:
+            return value
+
+        return self.get_property(":root", *name)
