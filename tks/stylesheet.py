@@ -8,8 +8,10 @@ MATCH_COMMENT = r"/\*.+?\*/"
 MATCH_BLOCK = r"\{.*?\}"
 MATCH_BRACES = r"[\{\}]"
 MATCH_DELIMITER_SPACE = r"(?<=[:,])\s"
-MATCH_SELECTOR = r"[\w\.#\-]+\{"
+MATCH_SELECTOR = r"[:\w\.#\-]+\{"
 MATCH_SPACE = r"\s"
+MATCH_VAR_NAME = r"--\w+"
+
 
 # Property name translations.
 CSS_TO_TK = {
@@ -106,3 +108,8 @@ class Stylesheet:
         return dict(
             filter(lambda k: results.get(k) is None, translated_results.items())
         )
+
+    def var(self, name: str) -> Optional[str]:
+        """Return the value associated with a given variable name."""
+        name = re.findall(MATCH_VAR_NAME, name)[0]
+        return self.get_property(":root", name)

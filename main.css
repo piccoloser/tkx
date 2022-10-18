@@ -16,11 +16,12 @@
     - wait: watch;
 */
 
-/* :root {
+:root {
     --red: #a22;
+    --fg: #ddd;
     --green: #082;
     --blue: #0ac;
-} */
+}
 
 Window {
     background: #333;
@@ -29,9 +30,9 @@ Window {
 }
 
 Button {
-    background: #0ac;
+    background: var(--red);
     border-style: flat;
-    color: #000;
+    color: var(--fg);
     cursor: hand2;
 }
 

@@ -46,3 +46,6 @@ class Window(tk.Tk):
             return None
 
         return self.stylesheet.get(name)
+
+    def root(self):
+        return self

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from tks.dbg import dbg
-from tks.stylesheet import Stylesheet
 from typing import Optional
+import re
 import tkinter as tk
 
 
@@ -54,12 +54,15 @@ class Element:
     @dbg
     def configure(self, **kwargs):
         """Configure properties of an `Element` and its widget."""
-        print(self.widget)
         for p in ("cl", "id"):
             if kwargs.get(p, None) is not None:
                 self.__dict__[p] = kwargs.pop(p)
 
         if kwargs:
+            for k, v in kwargs.items():
+                if v.startswith("var"):
+                    kwargs[k] = self.root().stylesheet.var(v)
+
             self.style.update(kwargs)
             self.widget.configure(**kwargs)
 
@@ -74,3 +77,6 @@ class Element:
         style block instead.
         """
         return self.parent.get_style_of(name) or self.parent.get_style_of(fallback)
+
+    def root(self) -> Optional[tk.Widget]:
+        return self.parent.root()
