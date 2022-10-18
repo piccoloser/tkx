@@ -9,7 +9,7 @@ def main():
 
     # Add a button and give it some functionality.
     btn = root.add(tk.Button, text="Click me!")
-    btn.bind("<Button-1>", lambda _: print("Hello, World!"))
+    btn.bind("<Button-1>", lambda _: print(btn.style))
 
     # Add some text.
     root.add(tk.Label, text="This is text!")
@@ -17,7 +17,7 @@ def main():
 
     frm = root.add(tk.Frame)
     btn2 = frm.add(tk.Button, text="Click me!")
-    btn2.bind("<Button-1>", lambda _: print("Hello again!"))
+    btn2.bind("<Button-1>", lambda _: print(btn2.style))
     btn2.configure(bg="#082", fg="#fff", id=2)
 
     root.mainloop()
