@@ -119,7 +119,7 @@ The above code outputs the following:
 ### CSS
 * Support for most commonly used tkinter widgets
 * Style blocks apply to all child and grandchild elements &check;
-* Reusable CSS variables
+* Reusable CSS variables &check;
 
 ### tks
 * Improved `Window` implementation
