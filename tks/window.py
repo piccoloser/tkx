@@ -56,7 +56,7 @@ class Window(tk.Tk):
 
         # Apply window properties.
         super().configure(**kwargs)
-        
+
     def get_style_of(self, name: str) -> Optional[dict[str, str]]:
         """
         Return the CSS block associated with `name` or `None` if

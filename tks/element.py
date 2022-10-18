@@ -2,7 +2,6 @@ from __future__ import annotations
 from tks.constants import NON_STYLE_CONFIG_OPTIONS
 from tks.dbg import dbg
 from typing import Optional
-import re
 import tkinter as tk
 
 

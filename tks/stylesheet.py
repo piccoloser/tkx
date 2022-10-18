@@ -1,5 +1,6 @@
 from pathlib import Path
 from tks.constants import (
+    CSS_PROPERTY_NAME_TRANSLATIONS,
     MATCH_BLOCK,
     MATCH_BRACES,
     MATCH_COMMENT,
@@ -10,16 +11,6 @@ from tks.constants import (
 )
 from typing import Optional
 import re
-
-
-# Property name translations.
-CSS_TO_TK = {
-    "background": "bg",
-    "background-color": "bg",
-    "border-style": "relief",
-    "border-width": "bd",
-    "color": "fg",
-}
 
 
 class Stylesheet:
@@ -101,8 +92,8 @@ class Stylesheet:
         # Translate from CSS property names.
         translated_results = {}
         for k in results.keys():
-            if k in CSS_TO_TK.keys():
-                translated_results[CSS_TO_TK[k]] = results[k]
+            if k in CSS_PROPERTY_NAME_TRANSLATIONS.keys():
+                translated_results[CSS_PROPERTY_NAME_TRANSLATIONS[k]] = results[k]
 
             else:
                 translated_results[k] = results[k]

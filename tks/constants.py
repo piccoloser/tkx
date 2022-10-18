@@ -17,3 +17,12 @@ NON_STYLE_CONFIG_OPTIONS: set[str] = {
     "text",
     "textvariable",
 }
+
+# Property name translations.
+CSS_PROPERTY_NAME_TRANSLATIONS = {
+    "background": "bg",
+    "background-color": "bg",
+    "border-style": "relief",
+    "border-width": "bd",
+    "color": "fg",
+}
