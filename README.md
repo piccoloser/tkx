@@ -1,5 +1,5 @@
 # tks
-Tkinter Superset &mdash; or tks (pronounced "tics") for short &mdash; is a GUI library built on top of tkinter with the intention of minimizing pain while setting up user interfaces. As it stands, tks is *heavily* under development and it could be quite a while before it reaches maturity.
+tkinter superset &mdash; or tks (pronounced "tics") for short &mdash; is a GUI library built on top of tkinter with the intention of minimizing pain while setting up user interfaces. As it stands, tks is *heavily* under development and it could be quite a while before it reaches maturity.
 
 One of the first ideas in the conception of tks was implementing support for CSS, the straightforward syntax of which would make styling tkinter widgets far less painful and verbose. This will also allow developers to separate visual styles from logic.
 
