@@ -1,0 +1,34 @@
+name: Method Error
+description: A class method (add(), configure(), etc.) is not behaving as expected.
+labels: [class-error]
+body: 
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What was supposed to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+  - type: dropdown
+    id: causes-crash
+    attributes:
+      label: Causes Crash
+      description: Does this issue cause your program to crash?
+      options:
+        - 'Yes'
+        - 'No'
+        - 'Sometimes'
+    validations:
+      required: true
+  - type: textarea
+    id: more-info
+    attributes:
+      label: More Information
+      description: Screenshots, suggested fixes, other information, etc.
