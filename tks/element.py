@@ -19,9 +19,8 @@ class Element:
             self.widget = widget(self.parent, **kwargs)
 
         fallback: Optional[str] = None
-        match widget.__name__:
-            case "Frame":
-                fallback = "Window"
+        if widget.__name__ == "Frame":
+            fallback = "Window"
 
         # Create a new copy of the stylesheet associated with
         # this Element or some fallback Element, then configure
