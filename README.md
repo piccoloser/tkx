@@ -1,3 +1,5 @@
+[Documentation](https://piccoloser.github.io/tks/)
+
 # tks
 tkinter superset &mdash; or tks (pronounced "tics") for short &mdash; is a GUI library built on top of tkinter with the intention of minimizing pain while setting up user interfaces. As it stands, tks is *heavily* under development and it could be quite a while before it reaches maturity.
 
