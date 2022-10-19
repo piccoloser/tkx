@@ -1,6 +1,6 @@
-[Documentation](https://piccoloser.github.io/tks/)
+## [Documentation](https://piccoloser.github.io/tks/)
 
-# tks
+# tks *
 tkinter superset &mdash; or tks (pronounced "tics") for short &mdash; is a GUI library built on top of tkinter with the intention of minimizing pain while setting up user interfaces. As it stands, tks is *heavily* under development and it could be quite a while before it reaches maturity.
 
 One of the first ideas in the conception of tks was implementing support for CSS, the straightforward syntax of which would make styling tkinter widgets far less painful and verbose. This will also allow developers to separate visual styles from logic.
@@ -120,28 +120,4 @@ The above code outputs the following:
 
 ![Dark gray window with a blue button and white text](../media/images/after.jpg)
 
-# Development Roadmap
-
-## v0.1.0
-
-### CSS
-* Support for most commonly used tkinter widgets &check;
-* Style blocks apply to all child and grandchild elements &check;
-* Reusable CSS variables &check;
-
-### tks
-* Improved `Window` implementation &check;
-* Generalized `Element` implementation &check;
-
-## v0.2.0
-
-### CSS
-* Support for id and class (`cl`) selectors
-* Basic `display` layout support
-
-### tks
-* Simpler implementation of `tk.Menu`
-* Key event translations
-* Separate default and minimal `Window` implementations
-
-## End of currently planned features
+<sup>* Name is subject to change.</sup>
