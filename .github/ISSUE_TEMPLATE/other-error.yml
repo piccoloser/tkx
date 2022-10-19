@@ -1,4 +1,4 @@
-name: Some Other Error
+name: Error (Other)
 description: Something else is not behaving as expected.
 labels: [other-error]
 body: 

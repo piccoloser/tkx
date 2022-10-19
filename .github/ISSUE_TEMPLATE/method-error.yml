@@ -1,4 +1,4 @@
-name: Method Error
+name: Error (Method)
 description: A class method (add(), configure(), etc.) is not behaving as expected.
 labels: [class-error]
 body: 

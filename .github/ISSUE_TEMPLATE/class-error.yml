@@ -1,4 +1,4 @@
-name: Class Error
+name: Error (Class)
 description: A class (Element, Stylesheet, Window) is not behaving as expected.
 labels: [class-error]
 body: 
