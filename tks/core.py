@@ -29,7 +29,7 @@ def tks_element(base: object):
 
         def get_style_of(
             self, name: str, fallback: Optional[str] = None
-        ) -> Optional[dict[str, str]]:
+        ) -> dict[str, str]:
             if self.__dict__.get("parent"):
                 return (
                     self.parent.get_style_of(name)
@@ -38,9 +38,9 @@ def tks_element(base: object):
                 )
 
             if self.stylesheet is None:
-                return None
+                return dict()
 
-            return self.stylesheet.get(name)
+            return self.stylesheet.get(name) or dict()
 
         def root(self):
             if self.__dict__.get("parent"):
