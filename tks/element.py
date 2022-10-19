@@ -1,6 +1,5 @@
 from __future__ import annotations
-from tks.core import parse_css_vars, tks_element
-from tks.dbg import dbg
+from tks.core import configure_style, tks_element
 from typing import Optional
 import tkinter as tk
 
@@ -31,12 +30,11 @@ class Element:
         if self.style is not None:
             self.configure(**self.style)
 
-    @dbg
     def bind(self, *args):
         """Bind an event and handler to an `Element`'s widget."""
         self.widget.bind(*args)
 
-    @parse_css_vars
+    @configure_style
     def configure(self, **kwargs):
         """Configure properties of an `Element` and its widget."""
         for p in ("cl", "id"):
