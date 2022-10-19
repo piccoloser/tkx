@@ -52,8 +52,10 @@ def tks_element(base: object):
             self, name: str, fallback: Optional[str] = None
         ) -> dict[str, str]:
             if self.__dict__.get("parent"):
-                return self.parent.get_style_of(name) or self.parent.get_style_of(
-                    fallback
+                return (
+                    self.parent.get_style_of(name)
+                    or self.parent.get_style_of(fallback)
+                    or dict()
                 )
 
             if self.stylesheet is None:
