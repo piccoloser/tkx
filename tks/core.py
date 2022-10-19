@@ -38,9 +38,9 @@ def tks_element(base: object):
                 )
 
             if self.stylesheet is None:
-                return dict()
+                return None
 
-            return self.stylesheet.get(name) or dict()
+            return self.stylesheet.get(name)
 
         def root(self):
             if self.__dict__.get("parent"):
@@ -55,6 +55,9 @@ def parse_css_vars(fn):
     def func(self, **kwargs):
         if self.style is None:
             self.style = dict()
+
+        if self.root().stylesheet is None:
+            return
 
         kwargs = self.root().stylesheet.format_properties(kwargs)
         self.style.update(kwargs)
