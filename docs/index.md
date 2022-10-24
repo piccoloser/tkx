@@ -240,7 +240,6 @@ The `Element` class is a wrapper around a tkinter widget, and should be created 
 * **`bind()`** &mdash; This method directly wraps the `bind` method of this `Element`'s widget. See the [tkinter](https://tkdocs.com/shipman/binding-levels.html) and [Tkl/Tk](https://www.tcl.tk/man/tcl8.6/TkCmd/bind.html) documentation for more information on the `bind` method.
 * **`configure()`** &mdash; This method handles keyword arguments specific to `Element`, then passes the rest directly to the `configure` method of the `Element`'s widget. See the [tkinter](https://tkdocs.com/shipman/std-attrs.html) documentation for the standard attributes which can be applied using the `configure` method.
 * **`root()`** &mdash; Returns the root `Window`.
-___
 
 ### Stylesheet
 The `Stylesheet` class is a CSS parser and container for parsed styles. A `Stylesheet` can be passed to a [`Window`](#window) in order to apply styles to it and its child elements.
@@ -258,7 +257,6 @@ The `Stylesheet` class is a CSS parser and container for parsed styles. A `Style
 * **`minify_css`** &mdash; Given the contents of a CSS file as a string, returns the contents with unnecessary spaces and comments removed.
 * **`parse_blocks`** &mdash; Returns a minified CSS block as a `dict[str, str]`, where CSS key names have been translated to tkinter-supported key names.
 * **`var`** &mdash; If a value matches the syntax of a CSS variable (eg. `var(--my-variable)`), returns the associated value from the CSS stylesheet's `:root`, otherwise returns the unchanged value.
-___
 
 ### Window
 *Implements [`@tks_element`](#tks_element)*
@@ -274,7 +272,6 @@ If a stylesheet has not been passed to the `__init__` method, `self.style` will 
 * **`elements`** &mdash; List of `Elements` contained within this object.
 * **`stylesheet`** &mdash; The `stylesheet` passed to this object during instantiation.
 * **`style`** &mdash; This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
-___
 
 ## Decorators
 
@@ -291,7 +288,7 @@ This decorator applies functionality relevant to tks elements.
 * **`add()`** &mdash; Creates a new `Element` containing the specified widget with `self` as the `Element`'s parent. Also appends the new object to `self.elements`.
 * **`get_style_of`** &mdash; Returns the style of a widget which has been defined in a stylesheet, given the widget name (eg. `tk.Frame.__name__ -> "Frame"`), or optionally the style of another `fallback` widget.
 * **`parent()`** &mdash; Returns the element's container. If the element is a `Window`, this method returns `self`.
-___
+
 ### `@update_style`
 *Function Decorator*
 
