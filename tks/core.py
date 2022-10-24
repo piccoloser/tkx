@@ -1,6 +1,6 @@
 from __future__ import annotations
 from tkinter import Widget
-from typing import Optional
+from typing import Any, Optional
 from tks.constants import NON_STYLE_CONFIG_OPTIONS
 
 
@@ -20,10 +20,11 @@ def tks_element(base: object):
             if self.elements is None:
                 self.elements = []
 
+            kwargs = parse_css_kwargs(self, **kwargs)
             element = Element(widget, self, **kwargs)
             self.elements.append(element)
 
-            element.widget.pack()
+            # element.widget.pack()
 
             return element
 
@@ -45,18 +46,39 @@ def tks_element(base: object):
         def root(self):
             if self.__dict__.get("parent"):
                 return self.parent.root()
-
             return self
+
+        def __getattr__(self, attr: str) -> Optional[Any]:
+            return self.__dict__.get(attr)
 
     return TksElement
 
 
-def parse_css_vars(fn):
+def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
+    for k, v in kwargs.items():
+        if "%" in str(v):
+            percent = float(v.replace("%", ""))
+
+            if obj.parent is not None:
+                target = obj.parent
+
+            else:
+                target = obj.root()
+
+            total = float(target[k] / 100) * percent
+            kwargs[k] = str(int(total))
+
+    return kwargs
+
+
+def update_style(fn):
     def func(self, **kwargs):
         if self.style is None:
             self.style = dict()
 
+        kwargs = parse_css_kwargs(self, **kwargs)
         kwargs = self.root().stylesheet.format_properties(kwargs)
+
         self.style.update(kwargs)
 
         # Remove keys not associated with style.

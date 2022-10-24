@@ -9,7 +9,10 @@ MATCH_VAR_NAME = r"--\w+"
 
 # tk.Widget options not associated with style.
 NON_STYLE_CONFIG_OPTIONS: set[str] = {
+    "class",
+    "colormap",
     "command",
+    "container",
     "default",
     "from_",
     "repeatdelay",
@@ -18,6 +21,23 @@ NON_STYLE_CONFIG_OPTIONS: set[str] = {
     "text",
     "textvariable",
     "to",
+    "visual",
+}
+
+STYLE_CONFIG_OPTIONS: set[str] = {
+    "bd",
+    "borderwidth",
+    "relief",
+    "background",
+    "bg",
+    "cursor",
+    "height",
+    "highlightbackground",
+    "highlightcolor",
+    "highlightthickness",
+    "padx",
+    "pady",
+    "width",
 }
 
 # Property name translations.
