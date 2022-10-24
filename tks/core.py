@@ -1,6 +1,6 @@
 from __future__ import annotations
 from tkinter import Widget
-from typing import Optional
+from typing import Any, Optional
 from tks.constants import NON_STYLE_CONFIG_OPTIONS
 from tks.dbg import dbg
 
@@ -41,10 +41,11 @@ def tks_element(base: object):
             if self.elements is None:
                 self.elements = []
 
+            kwargs = parse_css_kwargs(self, **kwargs)
             element = Element(widget, self, **kwargs)
             self.elements.append(element)
 
-            element.widget.pack()
+            # element.widget.pack()
 
             return element
 
@@ -66,14 +67,37 @@ def tks_element(base: object):
         def root(self):
             if self.__dict__.get("parent"):
                 return self.parent.root()
-
             return self
+
+        def __getattr__(self, attr: str) -> Optional[Any]:
+            return self.__dict__.get(attr)
 
     return TksElement
 
 
-@dbg(False)
-def configure_style(fn):
+def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
+    """
+    Parse a set of keyword arguments as though they were
+    CSS variables. Possible values include:
+    * Percent values (`width: 50%` -> `width={self.parent|root}.width / 2`)
+    """
+    for k, v in kwargs.items():
+        if "%" in str(v):
+            percent = float(v.replace("%", ""))
+
+            if obj.parent is not None:
+                target = obj.parent
+
+            else:
+                target = obj.root()
+
+            total = float(target[k] / 100) * percent
+            kwargs[k] = str(int(total))
+
+    return kwargs
+
+
+def update_style(fn):
     """
     Decorates the `configure` method of a class which is decorated with
     `tks.core.tks_element`.
@@ -90,7 +114,6 @@ def configure_style(fn):
     
     This only works if `--red` is defined in the stylesheet.
     """
-
     def func(self, **kwargs):
         if self.style is None:
             self.style = dict()
@@ -98,7 +121,9 @@ def configure_style(fn):
         if self.root().stylesheet is None:
             return
 
+        kwargs = parse_css_kwargs(self, **kwargs)
         kwargs = self.root().stylesheet.format_properties(kwargs)
+
         self.style.update(kwargs)
 
         # Remove keys not associated with style.

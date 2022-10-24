@@ -1,4 +1,4 @@
-from tks.core import configure_style, tks_element
+from tks.core import update_style, tks_element
 from tks.stylesheet import Stylesheet
 from typing import Optional
 import re
@@ -24,6 +24,6 @@ class Window(tk.Tk):
             if stylesheet.get("Window"):
                 self.configure(**self.stylesheet.get("Window"))
 
-    @configure_style
+    @update_style
     def configure(self, **kwargs):
         super().configure(**kwargs)
