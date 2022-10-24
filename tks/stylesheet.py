@@ -59,6 +59,9 @@ class Stylesheet:
 
     def get_property(self, widget_name: str, property: str) -> Optional[str]:
         """Return the value of a property given a selector and property name."""
+        if self.styles.get(widget_name) is None:
+            print(f"get_property found no CSS style for {widget_name}.")
+            return None
         return self.styles[widget_name].get(property)
 
     def get_selectors(self) -> tuple[str]:
