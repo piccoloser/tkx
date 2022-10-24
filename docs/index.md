@@ -6,9 +6,9 @@
 ## Table of Contents
 1. [Getting Started](#getting-started)
 2. [Example Project](#example-project)
-3. Pure API Documentation (Under construction)
+3. [Documentation](#documentation)
 
-## Getting Started
+# Getting Started
 ### Installation
 First, make sure you have a compatible version of Python installed along with tkinter. The author also recommends using a virtual environment when following this guide.
 
@@ -19,7 +19,7 @@ python -m pip install git+https://github.com/piccoloser/tks.git
 
 If you don't get any errors, tks should be successfully installed.
 
-## Example project
+# Example project
 *This section will disregard comparisons to tkinter's syntax in favor of being concise.*
 
 Let's create a project folder and within it add a new Python file called `main.py`, then paste the following code.
@@ -216,3 +216,93 @@ Label {
 This way, we can update items that share those variables without having to change each and every one of them.
 
 **Congratulations**, you've created your first program using tks!
+
+# Documentation
+
+## Classes
+### Element
+*Implements [`@tks_element`](#tks_element)*
+
+The `Element` class is a wrapper around a tkinter widget, and should be created indirectly via its parent's `add` method (see: [@tks_element](#tks_element)). The root of the hierarchy should be a [`Window`](#window).
+
+#### `Element` Attributes
+* **`elements`** &mdash; List of `Elements` contained within this object.
+* **`parent`** &mdash; The `Element` or `Window` which contains this object.
+* **`style`** &mdash; This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
+* **`widget`** &mdash; The tkinter `Widget` that this `Element` wraps.
+
+##### **Not Implemented**
+* **`cl`** &mdash; Describes the element's CSS `class`, which can be used in a stylesheet to target that element and others with the same class.
+    * **Important:** `class` is a restricted keyword in Python which cannot and should not be used outside the context of creating a Python class. `cl` is the only accepted word for this property.
+* **`id`** &mdash; Describes the element's `id`, which can be used in a stylesheet to target that specific element.
+
+#### `Element` Methods
+* **`bind()`** &mdash; This method directly wraps the `bind` method of this `Element`'s widget. See the [tkinter](https://tkdocs.com/shipman/binding-levels.html) and [Tkl/Tk](https://www.tcl.tk/man/tcl8.6/TkCmd/bind.html) documentation for more information on the `bind` method.
+* **`configure()`** &mdash; This method handles keyword arguments specific to `Element`, then passes the rest directly to the `configure` method of the `Element`'s widget. See the [tkinter](https://tkdocs.com/shipman/std-attrs.html) documentation for the standard attributes which can be applied using the `configure` method.
+* **`root()`** &mdash; Returns the root `Window`.
+___
+
+### Stylesheet
+The `Stylesheet` class is a CSS parser and container for parsed styles. A `Stylesheet` can be passed to a [`Window`](#window) in order to apply styles to it and its child elements.
+
+#### `Stylesheet` Attributes
+* **`styles`** &mdash; A `dict[str, dict[str, str]]` of the style values read from a CSS file.
+* **`source_min`** &mdash; The minified CSS source code of this object.
+
+#### `Stylesheet` Methods
+* **`format_properties`** &mdash; Replaces all values matching CSS variables (eg. `var(--my-variable)`) with their corresponding values in the CSS `:root` block.
+* **`get`** &mdash; Returns the CSS block associated with the given selector or `None` if it does not exist.
+* **`get_blocks`** &mdash; Returns a list of CSS blocks as defined in the CSS source code.
+* **`get_property`** &mdash; Returns the value of a property given a selector and property name. If not found, this method returns `None`.
+* **`get_selectors`** &mdash; Returns a list of CSS selectors as defined in the CSS source code.
+* **`minify_css`** &mdash; Given the contents of a CSS file as a string, returns the contents with unnecessary spaces and comments removed.
+* **`parse_blocks`** &mdash; Returns a minified CSS block as a `dict[str, str]`, where CSS key names have been translated to tkinter-supported key names.
+* **`var`** &mdash; If a value matches the syntax of a CSS variable (eg. `var(--my-variable)`), returns the associated value from the CSS stylesheet's `:root`, otherwise returns the unchanged value.
+___
+
+### Window
+*Implements [`@tks_element`](#tks_element)*
+
+The `Window` class is a subclass of tkinter's `Tk` widget. The only visual change from tkinter's default behavior is that `self.pack_propagate(0)` is called on instantiation.
+
+#### Creating a `Window`
+Optional title `str` and `Stylesheet` arguments can be passed directly to the `Window.__init__` method, making the creation of a titled window with an applied stylesheet a one-liner. The `width`, `height`, `x`, and `y` attributes are also automatically recalculated and ready for use once the object has been instantiated.
+
+If a stylesheet has not been passed to the `__init__` method, `self.style` will be equal to `None`.
+
+#### Window Attributes
+* **`elements`** &mdash; List of `Elements` contained within this object.
+* **`stylesheet`** &mdash; The `stylesheet` passed to this object during instantiation.
+* **`style`** &mdash; This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
+___
+
+## Decorators
+
+### `@tks_element`
+*Class Decorator*
+
+This decorator applies functionality relevant to tks elements.
+
+#### Implemented By
+* [`Element`](#element)
+* [`Window`](#window)
+
+#### Introduced Methods
+* **`add()`** &mdash; Creates a new `Element` containing the specified widget with `self` as the `Element`'s parent. Also appends the new object to `self.elements`.
+* **`get_style_of`** &mdash; Returns the style of a widget which has been defined in a stylesheet, given the widget name (eg. `tk.Frame.__name__ -> "Frame"`), or optionally the style of another `fallback` widget.
+* **`parent()`** &mdash; Returns the element's container. If the element is a `Window`, this method returns `self`.
+___
+### `@update_style`
+*Function Decorator*
+
+This decorator extends the `configure` method of objects implementing [`@tks_element`](#tks_element).
+
+Methods extended by this decorator will have their argument values parsed as CSS properties *into* valid tkinter values. Already valid values will be unchanged, whereas values containing CSS-specific syntax will be translated.
+
+#### Functionality
+* CSS Variables (depends on an associated `Stylesheet`)
+* Percent Values (depends on the same values in the object's parent)
+
+#### Implemented By
+* [`Element`](#element)`.configure`
+* [`Window`](#window)`.configure`
