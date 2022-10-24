@@ -2,9 +2,30 @@ from __future__ import annotations
 from tkinter import Widget
 from typing import Any, Optional
 from tks.constants import NON_STYLE_CONFIG_OPTIONS
+from tks.dbg import dbg
 
 
+@dbg(False)
 def tks_element(base: object):
+    """
+    Decorates a tks class in order to add the following instance methods:
+    * `self.add(widget, **kwargs)`
+    * `self.get_style_of(name, fallback)`
+    * `self.root()`
+
+    The `add` method creates a new tks `Element` which contains the
+    provided `tk.Widget` as a direct child element. Keyword arguments
+    can be passed to the method which will be applied to the resulting
+    widget.
+
+    The `get_style_of` method recursively asks for the style associated
+    with the provided `name` and optional `fallback` arguments. If found,
+    a `dict[str, str]` will be returned. Otherwise, this method returns
+    `None`.
+
+    The `root` method returns the `Window` which contains everything.
+    """
+
     class TksElement(base):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -30,7 +51,7 @@ def tks_element(base: object):
 
         def get_style_of(
             self, name: str, fallback: Optional[str] = None
-        ) -> Optional[dict[str, str]]:
+        ) -> dict[str, str]:
             if self.__dict__.get("parent"):
                 return (
                     self.parent.get_style_of(name)
@@ -55,6 +76,11 @@ def tks_element(base: object):
 
 
 def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
+    """
+    Parse a set of keyword arguments as though they were
+    CSS variables. Possible values include:
+    * Percent values (`width: 50%` -> `width={self.parent|root}.width / 2`)
+    """
     for k, v in kwargs.items():
         if "%" in str(v):
             percent = float(v.replace("%", ""))
@@ -72,9 +98,28 @@ def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
 
 
 def update_style(fn):
+    """
+    Decorates the `configure` method of a class which is decorated with
+    `tks.core.tks_element`.
+
+    Arguments passed to a method with this decorator are stringified,\
+    and CSS variables are translated to their actual value in the\
+    stylesheet's `:root`.
+
+    ### Example
+
+    `my_element.configure(color="var(--red)")`
+
+    becomes `my_element.configure(color="#f00")`
+    
+    This only works if `--red` is defined in the stylesheet.
+    """
     def func(self, **kwargs):
         if self.style is None:
             self.style = dict()
+
+        if self.root().stylesheet is None:
+            return
 
         kwargs = parse_css_kwargs(self, **kwargs)
         kwargs = self.root().stylesheet.format_properties(kwargs)
