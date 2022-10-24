@@ -94,7 +94,7 @@ def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
             total = float(target[k] / 100) * percent
             kwargs[k] = str(int(total))
 
-    return kwargs
+    return obj.root().stylesheet.format_properties(kwargs)
 
 
 def update_style(fn):
@@ -114,6 +114,7 @@ def update_style(fn):
     
     This only works if `--red` is defined in the stylesheet.
     """
+
     def func(self, **kwargs):
         if self.style is None:
             self.style = dict()
@@ -122,7 +123,6 @@ def update_style(fn):
             return
 
         kwargs = parse_css_kwargs(self, **kwargs)
-        kwargs = self.root().stylesheet.format_properties(kwargs)
 
         self.style.update(kwargs)
 
