@@ -1,6 +1,5 @@
 from __future__ import annotations
 from tks.core import update_style, tks_element
-from tks.dbg import dbg
 from typing import Optional
 import tkinter as tk
 
@@ -13,6 +12,9 @@ class Element:
 
         self.elements: Optional[list[Element]] = None
         self.parent = parent
+
+        if self.id is not None:
+            self.root.ids[self.id] = self
 
         if isinstance(parent, Element):
             self.widget = widget(self.parent.widget, **kwargs)
@@ -34,7 +36,6 @@ class Element:
         if kwargs:
             self.configure(**kwargs)
 
-    @dbg
     def bind(self, *args):
         """Bind an event and handler to an `Element`'s widget."""
         self.widget.bind(*args)
@@ -43,7 +44,6 @@ class Element:
     def configure(self, **kwargs):
         """Configure properties of an `Element` and its widget."""
         for p in ("cl", "id"):
-            if kwargs.get(p, None) is not None:
-                self.__dict__[p] = kwargs.pop(p)
+            self.__dict__[p] = kwargs.pop(p, None)
 
         self.widget.configure(**kwargs)
