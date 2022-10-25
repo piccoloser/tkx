@@ -1,7 +1,7 @@
 [project]
 name = "tks"
 version = "0.1.0"
-authors = ["Hunter Logan"]
+authors = [{name="Hunter Logan", email="_@piccoloser.com"}]
 description = "tkinter superset"
 license = {file = "LICENSE"}
 readme = "README.md"
