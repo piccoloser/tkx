@@ -1,3 +1,4 @@
+from tks.class_list import ClassList
 from tks.core import update_style, tks_element
 from tks.element import Element
 from tks.stylesheet import Stylesheet
@@ -37,7 +38,7 @@ class Window(tk.Tk):
     @property
     def cls(self) -> Optional[dict[str, list[Element]]]:
         if self.__cls is None:
-            self.__cls = dict()
+            self.__cls = ClassList()
         return self.__cls
 
     @update_style
