@@ -37,11 +37,9 @@ class Stylesheet:
         for selector, block in zip(self.get_selectors(), self.get_blocks()):
             self.styles[selector] = self.parse_block(block)
 
-    @dbg(True)
     def format_properties(self, properties: dict[str, str]) -> dict[str, str]:
         return {k: self.var(str(v)) for k, v in properties.items()}
 
-    @dbg(True)
     def get(self, name: str) -> Optional[str]:
         """
         Return the CSS block associated with
@@ -105,11 +103,8 @@ class Stylesheet:
             else:
                 translated_results[k] = results[k]
 
-        return dict(
-            filter(lambda k: results.get(k) is None, translated_results.items())
-        )
+        return dict(filter(lambda k: results.get(k) is None, translated_results.items()))
 
-    @dbg(True)
     def var(self, value: str) -> Optional[str]:
         """Return the value associated with a given variable name."""
         name = re.findall(MATCH_VAR_NAME, value)

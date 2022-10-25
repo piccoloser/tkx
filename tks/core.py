@@ -5,7 +5,6 @@ from tks.constants import NON_STYLE_CONFIG_OPTIONS
 from tks.dbg import dbg
 
 
-@dbg(False)
 def tks_element(base: object):
     """
     Decorates a tks class in order to add the following instance methods:
@@ -51,15 +50,9 @@ def tks_element(base: object):
 
             return element
 
-        def get_style_of(
-            self, name: str, fallback: Optional[str] = None
-        ) -> dict[str, str]:
+        def get_style_of(self, name: str, fallback: Optional[str] = None) -> dict[str, str]:
             if self.__dict__.get("parent"):
-                return (
-                    self.parent.get_style_of(name)
-                    or self.parent.get_style_of(fallback)
-                    or dict()
-                )
+                return self.parent.get_style_of(name) or self.parent.get_style_of(fallback) or dict()
 
             if self.stylesheet is None:
                 return None
@@ -130,12 +123,7 @@ def update_style(fn):
         self.style.update(kwargs)
 
         # Remove keys not associated with style.
-        self.style = dict(
-            filter(
-                lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS,
-                self.style.items(),
-            )
-        )
+        self.style = dict(filter(lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS, self.style.items()))
 
         fn(self, **kwargs)
 

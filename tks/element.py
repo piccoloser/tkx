@@ -22,9 +22,7 @@ class Element:
         if self.id is not None:
             # Raise an error if an element with this id already exists.
             if self.root.ids.get(self.id):
-                raise DuplicateIdError(
-                    f'An element with id "{self.id}" already exists.'
-                )
+                raise DuplicateIdError(f'An element with id "{self.id}" already exists.')
 
             self.root.ids[self.id] = self
 
