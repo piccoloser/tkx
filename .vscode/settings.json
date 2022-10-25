@@ -2,7 +2,7 @@
     "python.formatting.provider": "black",
     "python.formatting.blackArgs": [
         "--line-length",
-        "120"
+        "119"
     ],
     "python.linting.enabled": true
 }

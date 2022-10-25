@@ -1,0 +1,10 @@
+[project]
+name = "tks"
+version = "0.1.0"
+authors = ["Hunter Logan"]
+description = "tkinter superset"
+license = "MIT"
+readme = "README.md"
+
+[tool.black]
+line-length = 119
