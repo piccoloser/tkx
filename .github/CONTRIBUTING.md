@@ -21,7 +21,7 @@ Code contributions, while subject to review, are highly appreciated! Whether it'
 
 #### Bare-Bones Style Guidelines
 * Only import *exactly* what you need (no glob imports).
-* General PEP 8 standards apply, but line length is limited to 90 characters instead of 79.
+* General PEP 8 standards apply, but line length is limited to 120 characters instead of 79.
 * Code contributions must be formatted with [black](https://pypi.org/project/black/) before a PR is opened.
 * Variable names should use snake_case (*All lowercase, separate words with underscores*).
 * Class names should use PascalCase (*First letter of every word is capitalized, no spaces*).
