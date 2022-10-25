@@ -1,6 +1,6 @@
 from __future__ import annotations
 from tks.core import update_style, tks_element
-from tks.dbg import dbg
+from tks.error import DuplicateIdError
 from typing import Optional
 import tkinter as tk
 
@@ -19,14 +19,30 @@ class Element:
         else:
             self.widget = widget(self.parent, **kwargs)
 
-        fallback: Optional[str] = None
-        if widget.__name__ == "Frame":
-            fallback = "Window"
+        if self.id is not None:
+            # Raise an error if an element with this id already exists.
+            if self.root.ids.get(self.id):
+                raise DuplicateIdError(
+                    f'An element with id "{self.id}" already exists.'
+                )
 
-        # Create a new copy of the stylesheet associated with
-        # this Element or some fallback Element, then configure
-        # the element.
-        self.style = dict(self.get_style_of(widget.__name__, fallback))
+            self.root.ids[self.id] = self
+
+            # Type cast here to copy the output to a new instance variable.
+            # TODO: Check if this type cast can be moved to tks.core.tks_element
+            self.style = dict(self.get_style_of(f"#{self.id}", widget.__name__))
+
+        elif self.cl is not None:
+            self.root.cls[self.cl].add(self)
+            self.style = dict(self.get_style_of(f".{self.cl}", widget.__name__))
+
+        else:
+            fallback: Optional[str] = None
+            if widget.__name__ == "Frame":
+                fallback = "Window"
+
+            self.style = dict(self.get_style_of(widget.__name__, fallback))
+
         if self.style is not None:
             self.configure(**self.style)
 
@@ -34,7 +50,6 @@ class Element:
         if kwargs:
             self.configure(**kwargs)
 
-    @dbg
     def bind(self, *args):
         """Bind an event and handler to an `Element`'s widget."""
         self.widget.bind(*args)
@@ -43,7 +58,6 @@ class Element:
     def configure(self, **kwargs):
         """Configure properties of an `Element` and its widget."""
         for p in ("cl", "id"):
-            if kwargs.get(p, None) is not None:
-                self.__dict__[p] = kwargs.pop(p)
+            self.__dict__[p] = kwargs.pop(p, None)
 
         self.widget.configure(**kwargs)

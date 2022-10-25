@@ -220,6 +220,12 @@ This way, we can update items that share those variables without having to chang
 # Documentation
 
 ## Classes
+### ClassList
+The `ClassList` class is a custom collection which contains CSS class names and objects to which those classes are assigned. String-indexing into this class returns a `set[`[`Element`](#element)`]`.
+
+#### `ClassList` Attributes
+* **`classes`** &mdash; `dict[str, set[Element]]` containing class names and a `set` of the Elements to which each class is assigned.
+
 ### Element
 *Implements [`@tks_element`](#tks_element)*
 
@@ -231,9 +237,11 @@ The `Element` class is a wrapper around a tkinter widget, and should be created 
 * **`style`** &mdash; This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
 * **`widget`** &mdash; The tkinter `Widget` that this `Element` wraps.
 
-##### **Not Implemented**
+##### **Not Fully Implemented**
 * **`cl`** &mdash; Describes the element's CSS `class`, which can be used in a stylesheet to target that element and others with the same class.
     * **Important:** `class` is a restricted keyword in Python which cannot and should not be used outside the context of creating a Python class. `cl` is the only accepted word for this property.
+    * As of writing, only **one** class can be assigned to an element.
+    * As of writing, elements with both `cl` and `id` will only be styled according to their `id` attribute.
 * **`id`** &mdash; Describes the element's `id`, which can be used in a stylesheet to target that specific element.
 
 #### `Element` Methods
@@ -268,7 +276,9 @@ Optional title `str` and `Stylesheet` arguments can be passed directly to the `W
 If a stylesheet has not been passed to the `__init__` method, `self.style` will be equal to `None`.
 
 #### Window Attributes
+* **`cls`** &mdash; `ClassList` containing every CSS class used by this object's child elements (automatically populated).
 * **`elements`** &mdash; List of `Elements` contained within this object.
+* **`ids`** &mdash; `dict[str, Element]` mapping CSS ids to their respective `Element` within this object's child elements.
 * **`stylesheet`** &mdash; The `stylesheet` passed to this object during instantiation.
 * **`style`** &mdash; This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
 

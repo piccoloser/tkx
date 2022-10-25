@@ -11,7 +11,9 @@ def tks_element(base: object):
     Decorates a tks class in order to add the following instance methods:
     * `self.add(widget, **kwargs)`
     * `self.get_style_of(name, fallback)`
-    * `self.root()`
+
+    And the following properties:
+    * `self.root`
 
     The `add` method creates a new tks `Element` which contains the
     provided `tk.Widget` as a direct child element. Keyword arguments
@@ -23,7 +25,7 @@ def tks_element(base: object):
     a `dict[str, str]` will be returned. Otherwise, this method returns
     `None`.
 
-    The `root` method returns the `Window` which contains everything.
+    The `root` property returns the root `Window`.
     """
 
     class TksElement(base):
@@ -45,7 +47,7 @@ def tks_element(base: object):
             element = Element(widget, self, **kwargs)
             self.elements.append(element)
 
-            # element.widget.pack()
+            element.widget.pack()
 
             return element
 
@@ -64,9 +66,10 @@ def tks_element(base: object):
 
             return self.stylesheet.get(name)
 
+        @property
         def root(self):
             if self.__dict__.get("parent"):
-                return self.parent.root()
+                return self.parent.root
             return self
 
         def __getattr__(self, attr: str) -> Optional[Any]:
@@ -89,12 +92,12 @@ def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
                 target = obj.parent
 
             else:
-                target = obj.root()
+                target = obj.root
 
             total = float(target[k] / 100) * percent
             kwargs[k] = str(int(total))
 
-    return obj.root().stylesheet.format_properties(kwargs)
+    return obj.root.stylesheet.format_properties(kwargs)
 
 
 def update_style(fn):
@@ -119,7 +122,7 @@ def update_style(fn):
         if self.style is None:
             self.style = dict()
 
-        if self.root().stylesheet is None:
+        if self.root.stylesheet is None:
             return
 
         kwargs = parse_css_kwargs(self, **kwargs)
