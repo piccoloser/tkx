@@ -3,7 +3,7 @@ name = "tks"
 version = "0.1.0"
 authors = ["Hunter Logan"]
 description = "tkinter superset"
-license = "LICENSE"
+license = {file = "LICENSE"}
 readme = "README.md"
 
 [tool.black]
