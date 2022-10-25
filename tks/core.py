@@ -2,7 +2,6 @@ from __future__ import annotations
 from tkinter import Widget
 from typing import Any, Optional
 from tks.constants import NON_STYLE_CONFIG_OPTIONS
-from tks.dbg import dbg
 
 
 def tks_element(base: object):

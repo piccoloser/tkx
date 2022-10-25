@@ -12,8 +12,6 @@ from tks.constants import (
 from typing import Optional
 import re
 
-from tks.dbg import dbg
-
 
 class Stylesheet:
     """
