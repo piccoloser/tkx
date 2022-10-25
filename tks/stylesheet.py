@@ -9,7 +9,6 @@ from tks.constants import (
     MATCH_SPACE,
     MATCH_VAR_NAME,
 )
-from typing import Optional
 import re
 
 
@@ -38,7 +37,7 @@ class Stylesheet:
     def format_properties(self, properties: dict[str, str]) -> dict[str, str]:
         return {k: self.var(str(v)) for k, v in properties.items()}
 
-    def get(self, name: str) -> Optional[str]:
+    def get(self, name: str) -> str | None:
         """
         Return the CSS block associated with
         `name` or `None` if it does not exist.
@@ -53,7 +52,7 @@ class Stylesheet:
         # Remove any leftover curly braces and return the result.
         return (*map(lambda i: re.sub(MATCH_BRACES, "", i), result),)
 
-    def get_property(self, widget_name: str, property: str) -> Optional[str]:
+    def get_property(self, widget_name: str, property: str) -> str | None:
         """Return the value of a property given a selector and property name."""
         if self.styles.get(widget_name) is None:
             print(f"get_property found no CSS style for {widget_name}.")
@@ -103,7 +102,7 @@ class Stylesheet:
 
         return dict(filter(lambda k: results.get(k) is None, translated_results.items()))
 
-    def var(self, value: str) -> Optional[str]:
+    def var(self, value: str) -> str | None:
         """Return the value associated with a given variable name."""
         name = re.findall(MATCH_VAR_NAME, value)
 

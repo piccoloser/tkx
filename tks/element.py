@@ -1,7 +1,6 @@
 from __future__ import annotations
 from tks.core import update_style, tks_element
 from tks.error import DuplicateIdError
-from typing import Optional
 import tkinter as tk
 
 
@@ -11,7 +10,7 @@ class Element:
         self.id = kwargs.pop("id", None)
         self.cl = kwargs.pop("cl", None)
 
-        self.elements: Optional[list[Element]] = None
+        self.elements: list[Element] | None = None
         self.parent = parent
 
         if isinstance(parent, Element):
@@ -35,7 +34,7 @@ class Element:
             self.style = dict(self.get_style_of(f".{self.cl}", widget.__name__))
 
         else:
-            fallback: Optional[str] = None
+            fallback: str | None = None
             if widget.__name__ == "Frame":
                 fallback = "Window"
 

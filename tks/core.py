@@ -1,6 +1,6 @@
 from __future__ import annotations
 from tkinter import Widget
-from typing import Any, Optional
+from typing import Any
 from tks.constants import NON_STYLE_CONFIG_OPTIONS
 
 
@@ -46,7 +46,7 @@ def tks_element(base: object):
 
             return element
 
-        def get_style_of(self, name: str, fallback: Optional[str] = None) -> dict[str, str]:
+        def get_style_of(self, name: str, fallback: str | None = None) -> dict[str, str]:
             if self.__dict__.get("parent"):
                 return self.parent.get_style_of(name) or self.parent.get_style_of(fallback) or dict()
 
@@ -61,7 +61,7 @@ def tks_element(base: object):
                 return self.parent.root
             return self
 
-        def __getattr__(self, attr: str) -> Optional[Any]:
+        def __getattr__(self, attr: str) -> Any | None:
             return self.__dict__.get(attr)
 
     return TksElement

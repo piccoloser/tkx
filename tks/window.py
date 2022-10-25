@@ -2,14 +2,13 @@ from tks.class_list import ClassList
 from tks.core import update_style, tks_element
 from tks.element import Element
 from tks.stylesheet import Stylesheet
-from typing import Optional
 import re
 import tkinter as tk
 
 
 @tks_element
 class Window(tk.Tk):
-    def __init__(self, title: str = "", stylesheet: Optional[Stylesheet] = None):
+    def __init__(self, title: str = "", stylesheet: Stylesheet | None = None):
         super().__init__()
         super().update()
         super().title(title)
@@ -30,13 +29,13 @@ class Window(tk.Tk):
                 self.configure(**self.stylesheet.get("Window"))
 
     @property
-    def ids(self) -> Optional[dict[str, Element]]:
+    def ids(self) -> dict[str, Element] | None:
         if self.__ids is None:
             self.__ids = dict()
         return self.__ids
 
     @property
-    def cls(self) -> Optional[dict[str, list[Element]]]:
+    def cls(self) -> dict[str, list[Element]] | None:
         if self.__cls is None:
             self.__cls = ClassList()
         return self.__cls
