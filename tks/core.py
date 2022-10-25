@@ -27,9 +27,6 @@ def tks_element(base: object):
     """
 
     class TksElement(base):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
         def add(self, widget: Widget, **kwargs):
             """
             Creates a new child `Element` with the provided
