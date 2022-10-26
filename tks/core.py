@@ -1,6 +1,6 @@
 from __future__ import annotations
 from tkinter import Widget
-from typing import Any
+from typing import Any, Callable
 from tks.constants import NON_STYLE_CONFIG_OPTIONS
 
 
@@ -31,7 +31,8 @@ class TksElement:
         if self.stylesheet is None:
             return None
 
-        return self.stylesheet.get(name)
+        # Return a copy of the style dictionary.
+        return dict(self.stylesheet.get(name))
 
     @property
     def root(self):
@@ -67,27 +68,55 @@ def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
 
 def update_style(fn):
     """
-    Decorates the `configure` method of a class which is decorated with
-    `tks.core.tks_element`.
+    Decorates the `configure` method of a class which inherits from
+    `TksElement`.
 
-    Arguments passed to a method with this decorator are stringified,\
-    and CSS variables are translated to their actual value in the\
-    stylesheet's `:root`.
+    Takes a style dictionary and/or keyword arguments, then parses
+    the given values as CSS before configuring the widget wrapped by
+    the caller. Dictionary values are overwritten by keyword arguments.
 
-    ### Example
+    #### The following examples require `--red` to be defined in the stylesheet.
+    ### Example 1
 
-    `my_element.configure(color="var(--red)")`
+    ```python
+    my_element.configure(color="var(--red)")
+    ```
 
-    becomes `my_element.configure(color="#f00")`
-    
-    This only works if `--red` is defined in the stylesheet.
+    becomes `my_element.configure(fg="#f00")`
+
+    ### Example 2
+
+    ```python
+    my_style = {"color": "var(--red)"}
+    my_element.configure(my_style)
+    ```
+
+    becomes `my_element.configure(fg="#f00")`
+
+    ### Example 3
+
+    ```python
+    my_style = {"color": "var(--red)"}
+    my_element.configure(my_style, width=50)
+    ```
+
+    becomes `my_element.configure(fg="#f00", width=50)`
     """
 
-    def func(self, **kwargs):
+    def func(self, args: dict[str, Any] | None = None, **kwargs) -> Callable:
+        # If both a positional dictionary and keyword arguments
+        # are provided, update the dictionary with the provided
+        # keyword arguments.
+        if args is not None:
+            args.update(kwargs)
+            kwargs = args
+
+        # Create self.style if it doesn't already exist.
         if self.style is None:
             self.style = dict()
 
-        if self.root.stylesheet is None:
+        # If there is no stylesheet or if no arguments exist, exit.
+        if self.root.stylesheet is None or not any((args, kwargs)):
             return
 
         kwargs = parse_css_kwargs(self, **kwargs)
@@ -97,6 +126,7 @@ def update_style(fn):
         # Remove keys not associated with style.
         self.style = dict(filter(lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS, self.style.items()))
 
+        # Call the original configure method.
         fn(self, **kwargs)
 
     return func

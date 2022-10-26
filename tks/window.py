@@ -27,19 +27,20 @@ class Window(TksElement, tk.Tk):
         # the id and the value is the one Element with that id.
         self.__ids: dict[str, Element] = None
 
-        # List of Elements within this Window.
+        # List of child Elements of this Window.
         self.elements: list[Element] = None
 
-        self.stylesheet = stylesheet
+        # Dictionary describing the appearance of this Window.
+        self.style: dict[str, str] = None
+
+        self.stylesheet: Stylesheet | None = stylesheet
 
         # tk.Tk().geometry returns a str = "{width}x{height}+{x}+{y}".
         # Split the string along "x" and "+", then assign those values.
         self.width, self.height, self.x, self.y = re.split("[x+]", self.geometry())
 
-        self.style: dict[str, str] = None
         if stylesheet is not None:
-            if stylesheet.get("Window"):
-                self.configure(**self.stylesheet.get("Window"))
+            self.configure(self.stylesheet.get("Window"))
 
     @property
     def ids(self) -> dict[str, Element] | None:
