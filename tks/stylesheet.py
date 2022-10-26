@@ -35,12 +35,16 @@ class Stylesheet:
             self.styles[selector] = self.parse_block(block)
 
     def format_properties(self, properties: dict[str, str]) -> dict[str, str]:
+        """
+        Return the same dictionary with CSS variables replace with their
+        actual values.
+        """
         return {k: self.var(str(v)) for k, v in properties.items()}
 
     def get(self, name: str) -> str | None:
         """
-        Return the CSS block associated with
-        `name` or `None` if it does not exist.
+        Return the CSS block associated with `name` or `None` if it does
+        not exist.
         """
         return self.styles.get(name)
 
@@ -106,7 +110,7 @@ class Stylesheet:
         """Return the value associated with a given variable name."""
         name = re.findall(MATCH_VAR_NAME, value)
 
-        if not name:
-            return value
+        if name:
+            return self.get_property(":root", *name)
 
-        return self.get_property(":root", *name)
+        return value

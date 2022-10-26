@@ -1,70 +1,47 @@
 from __future__ import annotations
 from tkinter import Widget
-from typing import Any
+from typing import Any, Callable
 from tks.constants import NON_STYLE_CONFIG_OPTIONS
 
 
-def tks_element(base: object):
-    """
-    Decorates a tks class in order to add the following instance methods:
-    * `self.add(widget, **kwargs)`
-    * `self.get_style_of(name, fallback)`
+class TksElement:
+    def add(self, widget: Widget, **kwargs):
+        """
+        Creates a new child `Element` with the provided
+        keyword arguments and adds it to the caller.
+        Returns the added `Element`.
+        """
+        from tks.element import Element
 
-    And the following properties:
-    * `self.root`
+        if self.elements is None:
+            self.elements = []
 
-    The `add` method creates a new tks `Element` which contains the
-    provided `tk.Widget` as a direct child element. Keyword arguments
-    can be passed to the method which will be applied to the resulting
-    widget.
+        kwargs = parse_css_kwargs(self, **kwargs)
+        element = Element(widget, self, **kwargs)
+        self.elements.append(element)
 
-    The `get_style_of` method recursively asks for the style associated
-    with the provided `name` and optional `fallback` arguments. If found,
-    a `dict[str, str]` will be returned. Otherwise, this method returns
-    `None`.
+        element.widget.pack()
 
-    The `root` property returns the root `Window`.
-    """
+        return element
 
-    class TksElement(base):
-        def add(self, widget: Widget, **kwargs):
-            """
-            Creates a new child `Element` with the provided
-            keyword arguments and adds it to the caller.
-            Returns the added `Element`.
-            """
-            from tks.element import Element
+    def get_style_of(self, name: str, fallback: str | None = None) -> dict[str, str]:
+        if self.__dict__.get("parent"):
+            return self.parent.get_style_of(name) or self.parent.get_style_of(fallback) or dict()
 
-            if self.elements is None:
-                self.elements = []
+        if self.stylesheet is None:
+            return None
 
-            kwargs = parse_css_kwargs(self, **kwargs)
-            element = Element(widget, self, **kwargs)
-            self.elements.append(element)
+        # Return a copy of the style dictionary.
+        return dict(self.stylesheet.get(name))
 
-            element.widget.pack()
+    @property
+    def root(self):
+        if self.__dict__.get("parent"):
+            return self.parent.root
+        return self
 
-            return element
-
-        def get_style_of(self, name: str, fallback: str | None = None) -> dict[str, str]:
-            if self.__dict__.get("parent"):
-                return self.parent.get_style_of(name) or self.parent.get_style_of(fallback) or dict()
-
-            if self.stylesheet is None:
-                return None
-
-            return self.stylesheet.get(name)
-
-        @property
-        def root(self):
-            if self.__dict__.get("parent"):
-                return self.parent.root
-            return self
-
-        def __getattr__(self, attr: str) -> Any | None:
-            return self.__dict__.get(attr)
-
-    return TksElement
+    def __getattr__(self, attr: str) -> Any | None:
+        return self.__dict__.get(attr)
 
 
 def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
@@ -91,27 +68,55 @@ def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
 
 def update_style(fn):
     """
-    Decorates the `configure` method of a class which is decorated with
-    `tks.core.tks_element`.
+    Decorates the `configure` method of a class which inherits from
+    `TksElement`.
 
-    Arguments passed to a method with this decorator are stringified,\
-    and CSS variables are translated to their actual value in the\
-    stylesheet's `:root`.
+    Takes a style dictionary and/or keyword arguments, then parses
+    the given values as CSS before configuring the widget wrapped by
+    the caller. Dictionary values are overwritten by keyword arguments.
 
-    ### Example
+    #### The following examples require `--red` to be defined in the stylesheet.
+    ### Example 1
 
-    `my_element.configure(color="var(--red)")`
+    ```python
+    my_element.configure(color="var(--red)")
+    ```
 
-    becomes `my_element.configure(color="#f00")`
-    
-    This only works if `--red` is defined in the stylesheet.
+    becomes `my_element.configure(fg="#f00")`
+
+    ### Example 2
+
+    ```python
+    my_style = {"color": "var(--red)"}
+    my_element.configure(my_style)
+    ```
+
+    becomes `my_element.configure(fg="#f00")`
+
+    ### Example 3
+
+    ```python
+    my_style = {"color": "var(--red)"}
+    my_element.configure(my_style, width=50)
+    ```
+
+    becomes `my_element.configure(fg="#f00", width=50)`
     """
 
-    def func(self, **kwargs):
+    def func(self, args: dict[str, Any] | None = None, **kwargs) -> Callable:
+        # If both a positional dictionary and keyword arguments
+        # are provided, update the dictionary with the provided
+        # keyword arguments.
+        if args is not None:
+            args.update(kwargs)
+            kwargs = args
+
+        # Create self.style if it doesn't already exist.
         if self.style is None:
             self.style = dict()
 
-        if self.root.stylesheet is None:
+        # If there is no stylesheet or if no arguments exist, exit.
+        if self.root.stylesheet is None or not any((args, kwargs)):
             return
 
         kwargs = parse_css_kwargs(self, **kwargs)
@@ -121,6 +126,7 @@ def update_style(fn):
         # Remove keys not associated with style.
         self.style = dict(filter(lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS, self.style.items()))
 
+        # Call the original configure method.
         fn(self, **kwargs)
 
     return func

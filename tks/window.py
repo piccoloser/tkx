@@ -1,32 +1,46 @@
-from tks.class_list import ClassList
-from tks.core import update_style, tks_element
+from tks.core import update_style, TksElement
 from tks.element import Element
 from tks.stylesheet import Stylesheet
 import re
 import tkinter as tk
 
 
-@tks_element
-class Window(tk.Tk):
+class Window(TksElement, tk.Tk):
     def __init__(self, title: str = "", stylesheet: Stylesheet | None = None):
         super().__init__()
+
+        # Update window geometry.
         super().update()
+
+        # Set the window title.
         super().title(title)
 
         # Prevent child elements from resizing the main window.
         self.pack_propagate(0)
 
-        self.__cls = None
-        self.__ids = None
-        self.elements = None
+        # @property self.cls is a dictionary where the key is
+        # the class name and the value is a set containing all
+        # Elements with that class.
+        self.__cls: dict[str, set[Element]] = None
 
-        self.stylesheet = stylesheet
+        # @property self.ids is a dictionary where the key is
+        # the id and the value is the one Element with that id.
+        self.__ids: dict[str, Element] = None
+
+        # List of child Elements of this Window.
+        self.elements: list[Element] = None
+
+        # Dictionary describing the appearance of this Window.
+        self.style: dict[str, str] = None
+
+        self.stylesheet: Stylesheet | None = stylesheet
+
+        # tk.Tk().geometry returns a str = "{width}x{height}+{x}+{y}".
+        # Split the string along "x" and "+", then assign those values.
         self.width, self.height, self.x, self.y = re.split("[x+]", self.geometry())
-        self.style = None
 
         if stylesheet is not None:
-            if stylesheet.get("Window"):
-                self.configure(**self.stylesheet.get("Window"))
+            self.configure(self.stylesheet.get("Window"))
 
     @property
     def ids(self) -> dict[str, Element] | None:
@@ -37,7 +51,7 @@ class Window(tk.Tk):
     @property
     def cls(self) -> dict[str, list[Element]] | None:
         if self.__cls is None:
-            self.__cls = ClassList()
+            self.__cls = dict()
         return self.__cls
 
     @update_style
