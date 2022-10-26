@@ -1,11 +1,10 @@
 from __future__ import annotations
-from tks.core import update_style, tks_element
+from tks.core import TksElement, update_style
 from tks.error import DuplicateIdError
 import tkinter as tk
 
 
-@tks_element
-class Element:
+class Element(TksElement):
     def __init__(self, widget: tk.Widget, parent: tk.Widget, **kwargs):
         self.id = kwargs.pop("id", None)
         self.cl = kwargs.pop("cl", None)
@@ -30,6 +29,8 @@ class Element:
             self.style = dict(self.get_style_of(f"#{self.id}", widget.__name__))
 
         elif self.cl is not None:
+            if self.root.cls.get(self.cl) is None:
+                self.root.cls[self.cl] = set()
             self.root.cls[self.cl].add(self)
             self.style = dict(self.get_style_of(f".{self.cl}", widget.__name__))
 
