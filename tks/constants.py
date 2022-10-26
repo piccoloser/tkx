@@ -1,3 +1,19 @@
+# Property name translations.
+CSS_PROPERTY_NAME_TRANSLATIONS = {
+    "background": "bg",
+    "background-color": "bg",
+    "border-style": "relief",
+    "border-width": "bd",
+    "color": "fg",
+}
+
+# Supported properties which inherit from
+# the parent element by default.
+INHERITED_PROPERTIES: list[str] = [
+    "background",
+    "color",
+]
+
 # Regular expressions to help parse CSS.
 MATCH_COMMENT = r"/\*.+?\*/"
 MATCH_BLOCK = r"\{.*?\}"
@@ -38,13 +54,4 @@ STYLE_CONFIG_OPTIONS: set[str] = {
     "padx",
     "pady",
     "width",
-}
-
-# Property name translations.
-CSS_PROPERTY_NAME_TRANSLATIONS = {
-    "background": "bg",
-    "background-color": "bg",
-    "border-style": "relief",
-    "border-width": "bd",
-    "color": "fg",
 }

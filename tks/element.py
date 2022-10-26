@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Generator
 from tks.core import TksElement, update_style
 from tks.error import DuplicateIdError
 import tkinter as tk
@@ -55,12 +56,13 @@ class Element(TksElement):
         else:
             fallback: str | None = None
             if widget.__name__ == "Frame":
-                fallback = "Window"
+                self.widget.pack_propagate(0)
 
             # Style the element from its selector or the fallback.
             self.style = self.get_style_of(widget.__name__, fallback)
 
         # Configure with values from CSS stylesheet.
+        self.inherit_style()
         self.configure(self.style)
 
         # Reconfigure the widget with any provided keyword arguments.
@@ -77,4 +79,16 @@ class Element(TksElement):
         for p in ("cl", "id"):
             self.__dict__[p] = kwargs.pop(p, None)
 
+        if "frame" in self.widget_name:
+            kwargs.pop("fg", None)
+
         self.widget.configure(**kwargs)
+
+    def parents(self) -> Generator[Element]:
+        parent = self.parent
+
+        if parent.parent is not None:
+            yield parent.parent
+
+        else:
+            yield parent

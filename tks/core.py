@@ -1,7 +1,14 @@
 from __future__ import annotations
 from tkinter import Widget
 from typing import Any, Callable
-from tks.constants import NON_STYLE_CONFIG_OPTIONS
+from tks.constants import (
+    CSS_PROPERTY_NAME_TRANSLATIONS,
+    INHERITED_PROPERTIES,
+    NON_STYLE_CONFIG_OPTIONS,
+)
+
+
+translate_css = lambda x: CSS_PROPERTY_NAME_TRANSLATIONS[x]
 
 
 class TksElement:
@@ -25,22 +32,52 @@ class TksElement:
         return element
 
     def get_style_of(self, name: str, fallback: str | None = None) -> dict[str, str]:
-        if self.__dict__.get("parent"):
+        """
+        Returns the style dictionary associated with the given widget name
+        if it can be found in the root `Window`'s stylesheet. Accepts an
+        optional `fallback` object to use another element's style.
+
+        Returns `None` if no style is found.
+        """
+        if self.parent is not None:
             return self.parent.get_style_of(name) or self.parent.get_style_of(fallback) or dict()
 
         if self.stylesheet is None:
             return None
 
+        if self.stylesheet.get(name) is None:
+            return
+
         # Return a copy of the style dictionary.
         return dict(self.stylesheet.get(name))
 
+    def inherit_style(self) -> None:
+        if self.style is None:
+            self.style = dict()
+
+        for p in INHERITED_PROPERTIES:
+            if self.style.get(translate_css(p)) is None:
+                if self.parent.style.get(translate_css(p)) is None:
+                    continue
+
+                self.style[translate_css(p)] = self.parent.style.get(translate_css(p))
+
     @property
     def root(self):
+        """Returns the `root` Window."""
         if self.__dict__.get("parent"):
             return self.parent.root
         return self
 
+    @property
+    def widget_name(self):
+        if self.__dict__.get("widget") is not None:
+            return str(self.widget).split(".")[-1]
+
     def __getattr__(self, attr: str) -> Any | None:
+        return self.__dict__.get(attr)
+
+    def __getitem__(self, attr: str) -> Any | None:
         return self.__dict__.get(attr)
 
 
@@ -57,10 +94,11 @@ def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
             if obj.parent is not None:
                 target = obj.parent
 
-            else:
+            if target[k] is None:
                 target = obj.root
 
-            total = float(target[k] / 100) * percent
+            amount = float(target[k])
+            total = float(amount / 100) * percent
             kwargs[k] = str(int(total))
 
     return obj.root.stylesheet.format_properties(kwargs)

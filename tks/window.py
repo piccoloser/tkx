@@ -56,4 +56,5 @@ class Window(TksElement, tk.Tk):
 
     @update_style
     def configure(self, **kwargs):
+        kwargs.pop("fg", None)
         super().configure(**kwargs)
