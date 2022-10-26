@@ -220,53 +220,99 @@ This way, we can update items that share those variables without having to chang
 # Documentation
 
 ## Classes
-### ClassList
-The `ClassList` class is a custom collection which contains CSS class names and objects to which those classes are assigned. String-indexing into this class returns a `set[`[`Element`](#element)`]`.
-
-#### `ClassList` Attributes
-* **`classes`** &mdash; `dict[str, set[Element]]` containing class names and a `set` of the Elements to which each class is assigned.
-
 ### Element
-*Implements [`@tks_element`](#tks_element)*
+*Inherits from [`TksElement`](#tkselement)*
 
-The `Element` class is a wrapper around a tkinter widget, and should be created indirectly via its parent's `add` method (see: [@tks_element](#tks_element)). The root of the hierarchy should be a [`Window`](#window).
+The `Element` class is a wrapper around a tkinter widget, and should be created indirectly via its parent's `add` method. The root of the hierarchy should be a [`Window`](#window).
 
 #### `Element` Attributes
-* **`elements`** &mdash; List of `Elements` contained within this object.
-* **`parent`** &mdash; The `Element` or `Window` which contains this object.
-* **`style`** &mdash; This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
-* **`widget`** &mdash; The tkinter `Widget` that this `Element` wraps.
 
-##### **Not Fully Implemented**
-* **`cl`** &mdash; Describes the element's CSS `class`, which can be used in a stylesheet to target that element and others with the same class.
-    * **Important:** `class` is a restricted keyword in Python which cannot and should not be used outside the context of creating a Python class. `cl` is the only accepted word for this property.
-    * As of writing, only **one** class can be assigned to an element.
-    * As of writing, elements with both `cl` and `id` will only be styled according to their `id` attribute.
-* **`id`** &mdash; Describes the element's `id`, which can be used in a stylesheet to target that specific element.
+##### **`cl`** *Not Fully Implemented*
+Describes the element's CSS `class`, which can be used in a stylesheet to target that element and others with the same class.
+* **Important:** `class` is a restricted keyword in Python which cannot and should not be used outside the context of creating a Python class. `cl` is the only accepted word for this property.
+* As of writing, only **one** class can be assigned to an element.
+* As of writing, elements with both `cl` and `id` will only be styled according to their `id` attribute.
+
+##### **`elements`**
+List of `Elements` contained within this object.
+
+##### **`id`** *Not Fully Implemented*
+Describes the element's `id`, which can be used in a stylesheet to target that specific element.
+
+##### **`parent`**
+The `Element` or `Window` which contains this object.
+
+##### **`style`**
+This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
+
+##### **`widget`**
+The tkinter `Widget` that this `Element` wraps.
 
 #### `Element` Methods
-* **`bind()`** &mdash; This method directly wraps the `bind` method of this `Element`'s widget. See the [tkinter](https://tkdocs.com/shipman/binding-levels.html) and [Tkl/Tk](https://www.tcl.tk/man/tcl8.6/TkCmd/bind.html) documentation for more information on the `bind` method.
-* **`configure()`** &mdash; This method handles keyword arguments specific to `Element`, then passes the rest directly to the `configure` method of the `Element`'s widget. See the [tkinter](https://tkdocs.com/shipman/std-attrs.html) documentation for the standard attributes which can be applied using the `configure` method.
+
+##### **`bind(**kwargs)`**
+This method directly wraps the `bind` method of this `Element`'s widget. See the [tkinter](https://tkdocs.com/shipman/binding-levels.html) and [Tkl/Tk](https://www.tcl.tk/man/tcl8.6/TkCmd/bind.html) documentation for more information on the `bind` method.
+
+##### **`configure(args: dict[str, Any] | None = None, **kwargs)`**
+This method handles keyword arguments specific to `Element`, then passes the rest directly to the `configure` method of the `Element`'s widget. See the [tkinter](https://tkdocs.com/shipman/std-attrs.html) documentation for the standard attributes which can be applied using the `configure` method.
 
 ### Stylesheet
 The `Stylesheet` class is a CSS parser and container for parsed styles. A `Stylesheet` can be passed to a [`Window`](#window) in order to apply styles to it and its child elements.
 
 #### `Stylesheet` Attributes
-* **`styles`** &mdash; A `dict[str, dict[str, str]]` of the style values read from a CSS file.
-* **`source_min`** &mdash; The minified CSS source code of this object.
+
+##### **`styles`**
+A `dict[str, dict[str, str]]` of the style values read from a CSS file.
+
+##### **`source_min`**
+The minified CSS source code of this object.
 
 #### `Stylesheet` Methods
-* **`format_properties`** &mdash; Replaces all values matching CSS variables (eg. `var(--my-variable)`) with their corresponding values in the CSS `:root` block.
-* **`get`** &mdash; Returns the CSS block associated with the given selector or `None` if it does not exist.
-* **`get_blocks`** &mdash; Returns a list of CSS blocks as defined in the CSS source code.
-* **`get_property`** &mdash; Returns the value of a property given a selector and property name. If not found, this method returns `None`.
-* **`get_selectors`** &mdash; Returns a list of CSS selectors as defined in the CSS source code.
-* **`minify_css`** &mdash; Given the contents of a CSS file as a string, returns the contents with unnecessary spaces and comments removed.
-* **`parse_blocks`** &mdash; Returns a minified CSS block as a `dict[str, str]`, where CSS key names have been translated to tkinter-supported key names.
-* **`var`** &mdash; If a value matches the syntax of a CSS variable (eg. `var(--my-variable)`), returns the associated value from the CSS stylesheet's `:root`, otherwise returns the unchanged value.
+
+##### **`format_properties(dict[str, Any]) -> dict[str, str]`**
+Replaces all values matching CSS variables (eg. `var(--my-variable)`) with their corresponding values in the CSS `:root` block.
+
+##### **`get(str) -> str | None`**
+Returns the CSS block associated with the given selector or `None` if it does not exist.
+
+##### **`get_blocks() -> tuple[str]`**
+Returns a list of CSS blocks as defined in the CSS source code.
+
+##### **`get_property(widget_name: str, property: str) -> str | None`**
+Returns the value of a property given a selector and property name. If not found, this method returns `None`.
+
+##### **`get_selectors() -> tuple[str]`**
+Returns a list of CSS selectors as defined in the CSS source code.
+
+##### **`minify_css(source_path: str) -> str`**
+Given the contents of a CSS file as a string, returns the contents with unnecessary spaces and comments removed.
+
+##### **`parse_block(block: str) -> dict[str, str]`**
+Returns a minified CSS block as a `dict[str, str]`, where CSS key names have been translated to tkinter-supported key names.
+
+##### **`var(value: str) -> str | None`**
+If a value matches the syntax of a CSS variable (eg. `var(--my-variable)`), returns the associated value from the CSS stylesheet's `:root`, otherwise returns the unchanged value.
+
+### TksElement
+#### Inherited By
+* [`Element`](#element)
+* [`Window`](#window)
+
+#### Introduced Methods
+
+##### **`add(widget: tk.Widget, **kwargs)`**
+Creates a new `Element` containing the specified widget with `self` as the `Element`'s parent. Also appends the new object to `self.elements`.
+
+##### **`get_style_of(name: str, fallback: str | None = None) -> dict[str, str]`**
+Returns the style of a widget which has been defined in a stylesheet, given the widget name (eg. `tk.Frame.__name__ -> "Frame"`), or optionally the style of another `fallback` widget.
+
+#### Introduced Properties
+
+##### **`root`**
+Returns the root `Window`.
 
 ### Window
-*Implements [`@tks_element`](#tks_element)*
+*Inherits from [`TksElement`](#tkselement)*
 
 The `Window` class is a subclass of tkinter's `Tk` widget. The only visual change from tkinter's default behavior is that `self.pack_propagate(0)` is called on instantiation.
 
@@ -276,35 +322,27 @@ Optional title `str` and `Stylesheet` arguments can be passed directly to the `W
 If a stylesheet has not been passed to the `__init__` method, `self.style` will be equal to `None`.
 
 #### Window Attributes
-* **`cls`** &mdash; `ClassList` containing every CSS class used by this object's child elements (automatically populated).
-* **`elements`** &mdash; List of `Elements` contained within this object.
-* **`ids`** &mdash; `dict[str, Element]` mapping CSS ids to their respective `Element` within this object's child elements.
-* **`stylesheet`** &mdash; The `stylesheet` passed to this object during instantiation.
-* **`style`** &mdash; This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
+
+##### **`cls`**
+`ClassList` containing every CSS class used by this object's child elements (automatically populated).
+
+##### **`elements`**
+List of `Elements` contained within this object.
+
+##### **`ids`**
+`dict[str, Element]` mapping CSS ids to their respective `Element` within this object's child elements.
+
+##### **`stylesheet`**
+The `stylesheet` passed to this object during instantiation.
+
+##### **`style`**
+This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
 
 ## Decorators
-
-### `@tks_element`
-*Class Decorator*
-
-This decorator applies functionality relevant to tks elements.
-
-#### Implemented By
-* [`Element`](#element)
-* [`Window`](#window)
-
-#### Introduced Methods
-* **`add()`** &mdash; Creates a new `Element` containing the specified widget with `self` as the `Element`'s parent. Also appends the new object to `self.elements`.
-* **`get_style_of`** &mdash; Returns the style of a widget which has been defined in a stylesheet, given the widget name (eg. `tk.Frame.__name__ -> "Frame"`), or optionally the style of another `fallback` widget.
-* **`parent()`** &mdash; Returns the element's container. If the element is a `Window`, this method returns `self`.
-
-#### Introduced Properties
-* **`root`** &mdash; Returns the root `Window`.
-
 ### `@update_style`
 *Function Decorator*
 
-This decorator extends the `configure` method of objects implementing [`@tks_element`](#tks_element).
+This decorator extends the `configure` method of objects which inherit from [`TksElement`](#tkselement).
 
 Methods extended by this decorator will have their argument values parsed as CSS properties *into* valid tkinter values. Already valid values will be unchanged, whereas values containing CSS-specific syntax will be translated.
 
