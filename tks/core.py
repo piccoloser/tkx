@@ -9,7 +9,7 @@ from tks.constants import (
 import re
 
 
-translate_css = lambda x: CSS_PROPERTY_NAME_TRANSLATIONS[x]
+translate_css = lambda x: CSS_PROPERTY_NAME_TRANSLATIONS.get(x)
 
 
 class TksElement:
@@ -26,6 +26,15 @@ class TksElement:
         Parameters
         - widget: `tkinter.Widget` - Type of widget to be created.
         - `**kwargs` - Keyword arguments to use when creating the widget.
+
+        The following CSS values can be passed as keyword arguments:
+            * `color=...`
+            * `width` / `height` `= "...%"`
+
+        Under normal circumstances, tkinter's `Frame` widget does not
+        accept the `fg` keyword argument. This is handled instead by tks
+        such that a container may define the default font color of Label
+        widgets it contains.
         """
         from tks.element import Element
 
