@@ -227,26 +227,19 @@ The `Element` class is a wrapper around a tkinter widget, and should be created 
 
 #### `Element` Attributes
 
-##### **`cl`** *Not Fully Implemented*
-Describes the element's CSS `class`, which can be used in a stylesheet to target that element and others with the same class.
+##### **`cl`**
+Describes the element's CSS `class`, which can be used in a stylesheet to target that element and others with the same class. Multiple classes can be applied to one object by separating them with a single space, with properties from latter classes overwriting that of the former.
 * **Important:** `class` is a restricted keyword in Python which cannot and should not be used outside the context of creating a Python class. `cl` is the only accepted word for this property.
-* As of writing, only **one** class can be assigned to an element.
-* As of writing, elements with both `cl` and `id` will only be styled according to their `id` attribute.
+* As of writing, properties defined in `id` will be overwritten by those defined in `cl`. If a value defined in `id` is not touched by a CSS class, it will be left as is.
 
 ##### **`elements`**
 List of `Elements` contained within this object.
 
-##### **`id`** *Not Fully Implemented*
-Describes the element's `id`, which can be used in a stylesheet to target that specific element.
+##### **`id`**
+Describes the element's `id`, which can be used in a stylesheet to target that specific element. Only one element can be created with each `id`.
 
 ##### **`parent`**
 The `Element` or `Window` which contains this object.
-
-##### **`style`**
-This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
-
-##### **`widget`**
-The tkinter `Widget` that this `Element` wraps.
 
 #### `Element` Methods
 
@@ -306,10 +299,20 @@ Creates a new `Element` containing the specified widget with `self` as the `Elem
 ##### **`get_style_of(name: str, fallback: str | None = None) -> dict[str, str]`**
 Returns the style of a widget which has been defined in a stylesheet, given the widget name (eg. `tk.Frame.__name__ -> "Frame"`), or optionally the style of another `fallback` widget.
 
+##### **`parents()`**
+Returns an ascending generator over the ancesters of a `TksElement` ending with the root (inclusive).
+
+
 #### Introduced Properties
 
 ##### **`root`**
 Returns the root `Window`.
+
+##### **`style`**
+Returns the style dictionary (`dict[str, str]`) associated with the object, creating and returning a new `dict` if it doesn't already exist.
+
+##### **`widget`**
+Returns the tkinter `Widget` associated with the object or `None` if it doesn't exist.
 
 ### Window
 *Inherits from [`TksElement`](#tkselement)*
@@ -330,13 +333,10 @@ If a stylesheet has not been passed to the `__init__` method, `self.style` will 
 List of `Elements` contained within this object.
 
 ##### **`ids`**
-`dict[str, Element]` mapping CSS ids to their respective `Element` within this object's child elements.
+`dict[str, Element]` mapping CSS ids to their respective `Element` within this object's child elements (automatically populated).
 
 ##### **`stylesheet`**
 The `stylesheet` passed to this object during instantiation.
-
-##### **`style`**
-This `Element`'s style as a `dict[str, str]` or `None` if it does not exist.
 
 ## Decorators
 ### `@update_style`
