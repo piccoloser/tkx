@@ -11,7 +11,7 @@ currently being supported with security updates.-->
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, please contact the maintainer via one of the links in their profile.
+To report a vulnerability, please contact the maintainer via [email](mailto:_@piccoloser.com).
 
 Once reported, vulnerabilities will be given top priority.
 
