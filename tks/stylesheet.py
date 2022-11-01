@@ -30,7 +30,7 @@ class Stylesheet:
         # Minify and store the provided CSS.
         self.source_min = self.minify_css(source_path)
 
-        # Parse and store the minified CSS into `self.styles`.
+        # Parse and store the minified CSS into self.styles.
         for selector, block in zip(self.get_selectors(), self.get_blocks()):
             self.styles[selector] = self.parse_block(block)
 
