@@ -14,6 +14,11 @@ INHERITED_PROPERTIES: list[str] = [
     "color",
 ]
 
+# Properties not supported by container objects.
+INVALID_CONTAINER_PROPERTIES: list[str] = [
+    "color",
+]
+
 # Regular expressions to help parse CSS.
 MATCH_COMMENT = r"/\*.+?\*/"
 MATCH_BLOCK = r"\{.*?\}"

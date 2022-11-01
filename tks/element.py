@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Generator
-from tks.core import TksElement, update_style
+from tks.constants import INVALID_CONTAINER_PROPERTIES
+from tks.core import TksElement, translate_css, update_style
 from tks.error import DuplicateIdError
 import tkinter as tk
 
@@ -10,6 +11,13 @@ class Element(TksElement):
         # CSS id and class values. None if not provided.
         self.id = kwargs.pop("id", None)
         self.cl = kwargs.pop("cl", None)
+        other_kwargs = dict()
+
+        if widget is tk.Frame:
+            for k in INVALID_CONTAINER_PROPERTIES:
+                value = kwargs.pop(k, None)
+                if value is not None:
+                    other_kwargs[translate_css(k)] = value
 
         # List of direct children of this Element.
         self.elements: list[Element] | None = None
@@ -36,6 +44,7 @@ class Element(TksElement):
 
         # Style the element from its selector or the fallback.
         self.style = self.get_style_of(widget.__name__, fallback) or dict()
+        self.style.update(other_kwargs)
 
         if self.id is not None:
             # Raise an error if an element with this id already exists.
