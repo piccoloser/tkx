@@ -6,17 +6,26 @@ from tks.constants import (
     INHERITED_PROPERTIES,
     NON_STYLE_CONFIG_OPTIONS,
 )
+import re
 
 
 translate_css = lambda x: CSS_PROPERTY_NAME_TRANSLATIONS[x]
 
 
 class TksElement:
+    def __init__(self):
+        super().__init__()
+        self.__style: dict[str, str] | None = None
+        self.__widget: Widget | None = None
+
     def add(self, widget: Widget, **kwargs):
         """
-        Creates a new child `Element` with the provided
-        keyword arguments and adds it to the caller.
-        Returns the added `Element`.
+        Creates a new `Element` with the provided keyword arguments and
+        adds it as a child of the caller. Returns the added `Element`.
+
+        Parameters
+        - widget: `tkinter.Widget` - Type of widget to be created.
+        - `**kwargs` - Keyword arguments to use when creating the widget.
         """
         from tks.element import Element
 
@@ -31,30 +40,31 @@ class TksElement:
 
         return element
 
-    def get_style_of(self, name: str, fallback: str | None = None) -> dict[str, str]:
+    def get_style_of(self, name: str, fallback: str | None = None) -> dict[str, str] | None:
         """
-        Returns the style dictionary associated with the given widget name
-        if it can be found in the root `Window`'s stylesheet. Accepts an
-        optional `fallback` object to use another element's style.
+        Returns the style dictionary associated with the given name if it
+        can be found in the root window's stylesheet. Accepts an optional
+        fallback name in case the former is not found.
+
+        Parameters
+        - name: `str` - The name to search for in the stylesheet.
+        - fallback: `str | None` - Alternate style to search for if `name` isn't found.
 
         Returns `None` if no style is found.
         """
         if self.parent is not None:
-            return self.parent.get_style_of(name) or self.parent.get_style_of(fallback) or dict()
+            return self.parent.get_style_of(name) or self.parent.get_style_of(fallback) or None
 
         if self.stylesheet is None:
             return None
 
         if self.stylesheet.get(name) is None:
-            return
+            return None
 
         # Return a copy of the style dictionary.
         return dict(self.stylesheet.get(name))
 
     def inherit_style(self) -> None:
-        if self.style is None:
-            self.style = dict()
-
         for p in INHERITED_PROPERTIES:
             if self.style.get(translate_css(p)) is None:
                 if self.parent.style.get(translate_css(p)) is None:
@@ -64,21 +74,53 @@ class TksElement:
 
     @property
     def root(self):
-        """Returns the `root` Window."""
-        if self.__dict__.get("parent"):
-            return self.parent.root
-        return self
+        """Returns the root window."""
+        if self.parent is None:
+            return self
+        return self.parent.root
 
     @property
-    def widget_name(self):
-        if self.__dict__.get("widget") is not None:
-            return str(self.widget).split(".")[-1]
+    def style(self) -> dict[str, str] | None:
+        """
+        Returns the style dictionary associated with this object or
+        creates a new `dict` and returns it.
+        """
+        # Create self.style if it doesn't already exist.
+        if self.__style is None:
+            self.__style = dict()
+        return self.__style
+
+    @style.setter
+    def style(self, value: dict[str, str] | None) -> None:
+        self.__style = value
+
+    @property
+    def widget(self) -> Widget | None:
+        """Returns the widget associated with this object or `None`."""
+        return self.__widget
+
+    @widget.setter
+    def widget(self, value: Widget) -> None:
+        self.__widget = value
+
+    @property
+    def widget_name(self) -> str | None:
+        """Returns the lowercase name of this object's widget or `None`."""
+        if self.widget is not None:
+            return re.search(r"\w+", str(self.widget).split(".")[-1])[0]
+        return None
 
     def __getattr__(self, attr: str) -> Any | None:
-        return self.__dict__.get(attr)
+        # If no attribute is found in self, check self.widget.
+        if self[attr] is None and self.widget is not None:
+            return getattr(self.widget, attr)
+        return self[attr]
 
     def __getitem__(self, attr: str) -> Any | None:
         return self.__dict__.get(attr)
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.__dict__[key] = value
 
 
 def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
@@ -94,10 +136,10 @@ def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
             if obj.parent is not None:
                 target = obj.parent
 
-            if target[k] is None:
+            else:
                 target = obj.root
 
-            amount = float(target[k])
+            amount = float(target.style[k])
             total = float(amount / 100) * percent
             kwargs[k] = str(int(total))
 
@@ -148,10 +190,6 @@ def update_style(fn):
         if args is not None:
             args.update(kwargs)
             kwargs = args
-
-        # Create self.style if it doesn't already exist.
-        if self.style is None:
-            self.style = dict()
 
         # If there is no stylesheet or if no arguments exist, exit.
         if self.root.stylesheet is None or not any((args, kwargs)):

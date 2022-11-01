@@ -7,29 +7,35 @@ import tkinter as tk
 
 class Element(TksElement):
     def __init__(self, widget: tk.Widget, parent: tk.Widget, **kwargs):
-
         # CSS id and class values. None if not provided.
         self.id = kwargs.pop("id", None)
         self.cl = kwargs.pop("cl", None)
 
-        # List of child Elements of this Element.
+        # List of direct children of this Element.
         self.elements: list[Element] | None = None
 
         # Object to which this Element is added.
         self.parent = parent
+        self.__iter_parent = self.parent
 
-        # If self.parent is an Element, use its widget attribute
-        # as the parent of self.widget. Elements by themselves do
-        # not have the tk attribute which tkinter requires for a
-        # widget to be added to another object.
-        if isinstance(parent, Element):
+        # Use self.parent's widget attribute as the parent of self.widget.
+        # Elements by themselves do not have the tk attribute which
+        # tkinter requires for a widget to be added to another object.
+        if self.parent.widget is not None:
             self.widget = widget(self.parent.widget, **kwargs)
 
-        # If self.parent is not an Element, it is assumed that it
-        # is a Window, which directly inherits the tk attribute
-        # from its superclass (tk.Tk).
+        # If self.parent has no widget attribute, it is assumed that it
+        # is a Window, which directly inherits the tk attribute from its
+        # superclass (tk.Tk).
         else:
             self.widget = widget(self.parent, **kwargs)
+
+        fallback: str | None = None
+        if self.widget_name == "frame":
+            self.widget.pack_propagate(0)
+
+        # Style the element from its selector or the fallback.
+        self.style = self.get_style_of(widget.__name__, fallback) or dict()
 
         if self.id is not None:
             # Raise an error if an element with this id already exists.
@@ -40,26 +46,10 @@ class Element(TksElement):
             self.root.ids[self.id] = self
 
             # Style the element from its id selector.
-            self.style = self.get_style_of(f"#{self.id}", widget.__name__)
+            self.style.update(self.get_style_of(f"#{self.id}", widget.__name__))
 
-        elif self.cl is not None:
-            # If this CSS class hasn't been defined, create a new set.
-            if self.root.cls.get(self.cl) is None:
-                self.root.cls[self.cl] = set()
-
-            # Add this Element to the CSS class.
-            self.root.cls[self.cl].add(self)
-
-            # Style the element from its class selector.
-            self.style = self.get_style_of(f".{self.cl}", widget.__name__)
-
-        else:
-            fallback: str | None = None
-            if widget.__name__ == "Frame":
-                self.widget.pack_propagate(0)
-
-            # Style the element from its selector or the fallback.
-            self.style = self.get_style_of(widget.__name__, fallback)
+        # Apply one or more classes if applicable.
+        self.parse_cl()
 
         # Configure with values from CSS stylesheet.
         self.inherit_style()
@@ -77,18 +67,50 @@ class Element(TksElement):
     def configure(self, **kwargs):
         """Configure properties of an `Element` and its widget."""
         for p in ("cl", "id"):
-            self.__dict__[p] = kwargs.pop(p, None)
+            self[p] = kwargs.pop(p, None)
 
-        if "frame" in self.widget_name:
+        if self.widget_name == "frame":
             kwargs.pop("fg", None)
 
         self.widget.configure(**kwargs)
 
     def parents(self) -> Generator[Element]:
-        parent = self.parent
+        """Returns an ascending generator of an `Element`'s parents."""
+        # Get a reference to the current container.
+        ref = self.__iter_parent
 
-        if parent.parent is not None:
-            yield parent.parent
+        # If the current container has a parent, reference and return it.
+        if self.__iter_parent.parent is not None:
+            self.__iter_parent = self.__iter_parent.parent
+            yield ref
 
-        else:
-            yield parent
+        # Create a new parent reference to restart the generator.
+        ref = self.__iter_parent
+        self.__iter_parent = self.parent
+
+        # Return the root.
+        yield ref
+
+    def parse_cl(self):
+        """Apply CSS classes in the given order."""
+
+        # If no classes are supplied, exit.
+        if self.cl is None:
+            return
+
+        for cl in self.cl.split(" "):
+            # If this CSS class isn't defined in the root, create a new set.
+            if self.root.cls.get(cl) is None:
+                self.root.cls[cl] = set()
+
+            # Add this Element to the CSS class.
+            self.root.cls[cl].add(self)
+
+            cl_dict = self.get_style_of(f".{cl}", self.widget_name)
+
+            # If this CSS class isn't defined in the stylesheet, exit.
+            if cl_dict is None:
+                return
+
+            # Update the relevant style properties.
+            self.style.update(cl_dict)

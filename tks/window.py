@@ -27,12 +27,10 @@ class Window(TksElement, tk.Tk):
         # the id and the value is the one Element with that id.
         self.__ids: dict[str, Element] = None
 
-        # List of child Elements of this Window.
+        # List of direct children of this window.
         self.elements: list[Element] = None
 
-        # Dictionary describing the appearance of this Window.
-        self.style: dict[str, str] = None
-
+        # Style dictionary associated with this window.
         self.stylesheet: Stylesheet | None = stylesheet
 
         # tk.Tk().geometry returns a str = "{width}x{height}+{x}+{y}".
