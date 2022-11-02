@@ -1,4 +1,4 @@
-# tks (tkinter superset) *
+# tkx (tkinter superset) *
 ## Disclaimers
 * This project was written in Python version 3.10 and has yet to be tested with earlier versions of the language.
 * Developers using WSL may encounter issues stemming from their `DISPLAY` environment variable. The author has yet to find a solution to this problem.
@@ -14,10 +14,10 @@ First, make sure you have a compatible version of Python installed along with tk
 
 Run the following command:
 ```
-python -m pip install git+https://github.com/piccoloser/tks.git
+python -m pip install git+https://github.com/piccoloser/tkx.git
 ```
 
-If you don't get any errors, tks should be successfully installed.
+If you don't get any errors, tkx should be successfully installed.
 
 # Example project
 *This section will disregard comparisons to tkinter's syntax in favor of being concise.*
@@ -27,11 +27,11 @@ Let's create a project folder and within it add a new Python file called `main.p
 # main.py
 
 import tkinter as tk
-import tks
+import tkx
 
 
 def main():
-    root = tks.Window("My Application")
+    root = tkx.Window("My Application")
     root.mainloop()
 
 
@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
 Running this script will open the following window:
 
-![Basic tks Window](./images/gs_window.jpg)
+![Basic tkx Window](./images/gs_window.jpg)
 
 To add a new text label to this window, we'll use the `add` method **before** `root.mainloop()`.
 
@@ -50,7 +50,7 @@ To add a new text label to this window, we'll use the `add` method **before** `r
 # main.py
 # ...
 
-root = tks.Window("My Application")
+root = tkx.Window("My Application")
 
 root.add(tk.Label, text="This is some text!")
 
@@ -61,9 +61,9 @@ root.mainloop()
 
 Now the window should display some text.
 
-![Basic tks Window with text label](./images/gs_window_label.jpg)
+![Basic tkx Window with text label](./images/gs_window_label.jpg)
 
-A major feature of tks is the ability to style widgets with Cascading Style Sheets (CSS), a language used heavily in the world of web design for the purpose of describing how HTML elements look.
+A major feature of tkx is the ability to style widgets with Cascading Style Sheets (CSS), a language used heavily in the world of web design for the purpose of describing how HTML elements look.
 
 Let's create another file in our project folder and name it `style.css`. In this file, paste the following:
 
@@ -86,17 +86,17 @@ Now in `main.py`, **above** where we defined our window, we'll add a line for th
 # main.py
 # ...
 
-stylesheet = tks.Stylesheet("./style.css")
-root = tks.Window("My Application", stylesheet)
+stylesheet = tkx.Stylesheet("./style.css")
+root = tkx.Window("My Application", stylesheet)
 
 # ...
 ```
 
 The window should now appear with a black background and white text.
 
-![Basic styled tks window.](./images/gs_window_styled.jpg)
+![Basic styled tkx window.](./images/gs_window_styled.jpg)
 
-We use a relative path `./style.css` to refer to our new CSS file. This path is validated using `pathlib` and the file contents are automatically parsed into usable Python code as soon as we create the `tks.Stylesheet`.
+We use a relative path `./style.css` to refer to our new CSS file. This path is validated using `pathlib` and the file contents are automatically parsed into usable Python code as soon as we create the `tkx.Stylesheet`.
 
 Next, let's change the color of our text when the user clicks a button. First, we'll add the button itself...
 
@@ -128,7 +128,7 @@ Then, we'll add the actual functionality to our button. Here's the full code sni
 
 ```python
 import tkinter as tk
-import tks
+import tkx
 
 
 def change_color(label, color):
@@ -137,8 +137,8 @@ def change_color(label, color):
 
 
 def main():
-    stylesheet = tks.Stylesheet("./style.css")
-    root = tks.Window("My Application", stylesheet)
+    stylesheet = tkx.Stylesheet("./style.css")
+    root = tkx.Window("My Application", stylesheet)
 
     my_label = root.add(tk.Label, text="This is some text!")
 
@@ -160,7 +160,7 @@ if __name__ == "__main__":
 
 Here's what the result looks like:
 
-![Styled tks window with button](./images/gs_window_button.jpg)
+![Styled tkx window with button](./images/gs_window_button.jpg)
 
 Great! Clicking this button will change the color of our text from white to cyan. Now let's add some styling to the button:
 
@@ -179,7 +179,7 @@ Button {
 
 Now you'll see that the button is blue with white text and a solid border.
 
-![Styled tks window with button](./images/gs_window_button_styled.jpg)
+![Styled tkx window with button](./images/gs_window_button_styled.jpg)
 
 Before wrapping up this guide, we can reduce repetition in our CSS by using variables. In CSS, variables are defined using a selector called `:root` and referenced using the `var()` function.
 
@@ -215,13 +215,13 @@ Label {
 
 This way, we can update items that share those variables without having to change each and every one of them.
 
-**Congratulations**, you've created your first program using tks!
+**Congratulations**, you've created your first program using tkx!
 
 # Documentation
 
 ## Classes
 ### Element
-*Inherits from [`TksElement`](#tkselement)*
+*Inherits from [`TkxElement`](#tkxelement)*
 
 The `Element` class is a wrapper around a tkinter widget, and should be created indirectly via its parent's `add` method. The root of the hierarchy should be a [`Window`](#window).
 
@@ -286,7 +286,7 @@ Returns a minified CSS block as a `dict[str, str]`, where CSS key names have bee
 ##### **`var(value: str) -> str | None`**
 If a value matches the syntax of a CSS variable (eg. `var(--my-variable)`), returns the associated value from the CSS stylesheet's `:root`, otherwise returns the unchanged value.
 
-### TksElement
+### TkxElement
 #### Inherited By
 * [`Element`](#element)
 * [`Window`](#window)
@@ -300,7 +300,7 @@ Creates a new `Element` containing the specified widget with `self` as the `Elem
 Returns the style of a widget which has been defined in a stylesheet, given the widget name (eg. `tk.Frame.__name__ -> "Frame"`), or optionally the style of another `fallback` widget.
 
 ##### **`parents()`**
-Returns an ascending generator over the ancesters of a `TksElement` ending with the root (inclusive).
+Returns an ascending generator over the ancesters of a `TkxElement` ending with the root (inclusive).
 
 
 #### Introduced Properties
@@ -315,7 +315,7 @@ Returns the style dictionary (`dict[str, str]`) associated with the object, crea
 Returns the tkinter `Widget` associated with the object or `None` if it doesn't exist.
 
 ### Window
-*Inherits from [`TksElement`](#tkselement)*
+*Inherits from [`TkxElement`](#tkxelement)*
 
 The `Window` class is a subclass of tkinter's `Tk` widget. The only visual change from tkinter's default behavior is that `self.pack_propagate(0)` is called on instantiation.
 
@@ -342,7 +342,7 @@ The `stylesheet` passed to this object during instantiation.
 ### `@update_style`
 *Function Decorator*
 
-This decorator extends the `configure` method of objects which inherit from [`TksElement`](#tkselement).
+This decorator extends the `configure` method of objects which inherit from [`TkxElement`](#tkxelement).
 
 Methods extended by this decorator will have their argument values parsed as CSS properties *into* valid tkinter values. Already valid values will be unchanged, whereas values containing CSS-specific syntax will be translated.
 

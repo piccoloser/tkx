@@ -1,10 +1,18 @@
-[project]
-name = "tks"
+[tool.poetry]
+name = "tkx"
 version = "0.1.0"
-authors = [{name="Hunter Logan", email="_@piccoloser.com"}]
-description = "tkinter superset"
-license = {file = "LICENSE"}
+description = ""
+authors = ["Hunter Logan <_@piccoloser.com>"]
 readme = "README.md"
 
-[tool.black]
-line-length = 119
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+black = "^22.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -15,4 +15,4 @@ To report a vulnerability, please contact the maintainer via [email](mailto:_@pi
 
 Once reported, vulnerabilities will be given top priority.
 
-A public announcement will be made on the [Discussions](https://github.com/piccoloser/tks/discussions) page once the problem is resolved.
+A public announcement will be made on the [Discussions](https://github.com/piccoloser/tkx/discussions) page once the problem is resolved.

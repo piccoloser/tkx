@@ -1,11 +1,11 @@
 import tkinter as tk
-import tks
+import tkx
 
 
 def main():
     # Define a stylesheet and main window.
-    stylesheet = tks.Stylesheet("./main.css")
-    root = tks.Window("Test!", stylesheet)
+    stylesheet = tkx.Stylesheet("./main.css")
+    root = tkx.Window("Test!", stylesheet)
 
     # Add some text.
     root.add(tk.Label, text="This is text!")

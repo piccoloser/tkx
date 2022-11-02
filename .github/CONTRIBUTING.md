@@ -1,6 +1,6 @@
 # Contribution Guidelines
 
-Thank you for considering contributing to tks!
+Thank you for considering contributing to tkx!
 
 These guidelines are to help you make meaningful changes which help improve the project without too much (if any) refactoring on my part. In return for your compliance with this guide, I will reciprocate by addressing your issue, assessing changes, and assisting in the completion of your pull requests!
 
@@ -8,7 +8,7 @@ Of course, when communicating with others and/or contributing, please act in acc
 
 ## Contributions I'm Looking For
 
-tks is by no means a massive or hyper complex project, but it's a lot to implement for one developer! There are many ways you can contribute, and many of them don't involve writing *any* code.
+tkx is by no means a massive or hyper complex project, but it's a lot to implement for one developer! There are many ways you can contribute, and many of them don't involve writing *any* code.
 
 ### Ideas for Improvement
 When creating something that's meant to improve the developer experience, it takes more than *one* developer's opinions and ideas to get a good idea of what changes should be made. By contributing your ideas for features, changes, and improvements, you make the thinking part of all this a lot easier!
@@ -17,7 +17,7 @@ When creating something that's meant to improve the developer experience, it tak
 It would be great if things worked all the time, but that simply isn't the case. To add to that, sometimes a bug might only happen in very specific circumstances that only *you* have encountered. Simply reporting any bugs you encounter along with steps to reproduce said bugs is a huge help in squashing them.
 
 ### Bug Fixes and/or Feature Implementations
-Code contributions, while subject to review, are highly appreciated! Whether it's fixing a bug, optimizing a feature, or implementing new functionality, any effort that goes towards improving tks is welcome!
+Code contributions, while subject to review, are highly appreciated! Whether it's fixing a bug, optimizing a feature, or implementing new functionality, any effort that goes towards improving tkx is welcome!
 
 #### Bare-Bones Style Guidelines
 * Only import *exactly* what you need (no glob imports).
@@ -26,10 +26,10 @@ Code contributions, while subject to review, are highly appreciated! Whether it'
 * Variable names should use snake_case (*All lowercase, separate words with underscores*).
 * Class names should use PascalCase (*First letter of every word is capitalized, no spaces*).
 * Constant names should use SCREAMING_SNAKE_CASE (*snake_case but caps lock ON*).
-  * All constants must be defined in `tks/constants.py` and imported where needed.
+  * All constants must be defined in `tkx/constants.py` and imported where needed.
 
 ## What I'm Not Looking For
-* Please keep the purpose of this project in mind when submitting feature suggestions. tks is meant to improve the developer's experience when making a GUI application in Python.
+* Please keep the purpose of this project in mind when submitting feature suggestions. tkx is meant to improve the developer's experience when making a GUI application in Python.
   * For example, please do not submit a feature request for an integrated web browser or calculator.
 
 * Please do not use the issue tracker for support requests ("*How do I...?*").

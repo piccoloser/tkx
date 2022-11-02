@@ -168,5 +168,5 @@ cython_debug/
 .idea
 .vscode/launch.json
 
-test.py
-test.css
+dev.py
+dev.css
