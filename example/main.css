@@ -1,0 +1,45 @@
+/* 
+    Common Cursors:
+    - all-scroll: fleur;
+    - cell: plus;
+    - crosshair: crosshair;
+    - default: left_ptr;
+    - help: question_arrow;
+    - move: fleur;
+    - pointer: hand2;
+    - resize:
+        - n: sb_v_double_arrow;
+        - s: sb_v_double_arrow;
+        - e: sb_h_double_arrow;
+        - w: sb_h_double_arrow;
+    - text: xterm;
+    - wait: watch;
+*/
+
+:root {
+    --bg: #333;
+    --fg: #ddd;
+    --red: #a22;
+    --green: #082;
+    --blue: #0ac;
+}
+
+Window {
+    background: var(--bg);
+    width: 300;
+    height: 120;
+}
+
+Button {
+    background: var(--red);
+    border-style: flat;
+    color: black;
+    cursor: hand2;
+}
+
+Label {
+    background: var(--bg);
+    border-style: flat;
+    border-width: 2;
+    color: var(--fg);
+}
