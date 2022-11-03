@@ -32,8 +32,12 @@ body:
     attributes:
       label: How do you think it should work?
       description: Please include at least one pseudo-code example.
-  - type: checkboxes
+  - type: dropdown
     id: willing-to-help
     attributes:
+      label: Can you help further?
       options:
-        - label: Would you be able or willing to help further on this issue by contributing or providing more details if needed?
+        - label: I am willing to help further with this issue.
+        - label: I only want to bring attention to this issue.
+    validations:
+      required: true
