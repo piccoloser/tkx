@@ -32,12 +32,5 @@ body:
     attributes:
       label: How do you think it should work?
       description: Please include at least one pseudo-code example.
-  - type: dropdown
-    id: willing-to-help
-    attributes:
-      label: Can you help further?
-      options:
-        - I am willing to help further with this issue.
-        - I only want to bring attention to this issue.
     validations:
       required: true
