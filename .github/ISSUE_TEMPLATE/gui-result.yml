@@ -18,6 +18,9 @@ body:
       required: true
   - type: checkboxes
     id: double-checked
+    label: Verify Before Submitting
     options:
-      - label: I have verified that the relevant CSS and Python code are correct and bug free.
+      - label: I have checked the [documentation](https://piccoloser.github.io/tkx/#documentation) for relevant information about my issue.
+        required: true
+      - label: I have verified that the included Python and CSS code are correct.
         required: true
