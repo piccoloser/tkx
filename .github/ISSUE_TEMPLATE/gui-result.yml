@@ -21,7 +21,7 @@ body:
     attributes:
       label: Before Submitting
       options:
-        - label: I have checked the [documentation]() for info relevant to my issue.
+        - label: I have checked the [documentation](https://piccoloser.github.io/tkx/#documentation) for info relevant to my issue.
           required: true
         - label: I have verified that the included Python and CSS code are correct.
           required: true
