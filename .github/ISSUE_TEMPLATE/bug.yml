@@ -1,6 +1,6 @@
-name: Error (Other)
-description: Something else is not behaving as expected.
-labels: [other-error]
+name: Bug Report
+description: Something is not behaving as expected.
+labels: [bug]
 body: 
   - type: textarea
     id: expected
