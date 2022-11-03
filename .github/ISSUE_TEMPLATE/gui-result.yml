@@ -19,6 +19,7 @@ body:
   - type: checkboxes
     id: double-checked
     attributes:
+      label: Before Submitting
       options:
         - label: I have checked the [documentation]() for info relevant to my issue.
           required: true
