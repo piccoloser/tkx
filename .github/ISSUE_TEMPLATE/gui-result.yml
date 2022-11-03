@@ -16,6 +16,8 @@ body:
       description: What was wrong with the resulting widget(s)?
     validations:
       required: true
+
+body:
   - type: checkboxes
     id: double-checked
     options:
