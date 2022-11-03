@@ -1,0 +1,23 @@
+name: Unexpected GUI Result
+description: Something didn't come out looking like it should.
+labels: [appearance]
+body: 
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What were your expectations? Please include any relevant Python or CSS code.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What was wrong with the resulting widget(s)?
+    validations:
+      required: true
+  - type: checkboxes
+    id: double-checked
+    options:
+      - label: I have verified that the relevant CSS and Python code are correct and bug free.
+        required: true
