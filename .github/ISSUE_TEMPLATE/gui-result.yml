@@ -1,26 +1,26 @@
 name: Unexpected GUI Result
-description: Something didn't come out looking like it should.
+description: Something did not come out looking as it should.
 labels: [appearance]
 body: 
-- type: textarea
-  id: expected
-  attributes:
-    label: Expected Behavior
-    description: What were your expectations? Please include any relevant Python or CSS code.
-  validations:
-    required: true
-- type: textarea
-  id: actual
-  attributes:
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What were your expectations? Please include any relevant Python or CSS code.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
       label: Actual Behavior
       description: What was wrong with the resulting widget(s)?
-  validations:
+    validations:
       required: true
-- type: checkboxes
-id: double-checked
-attributes:
-  options:
-    - label: I have checked the [documentation](https://piccoloser.github.io/tkx/#documentation) for relevant information about my issue.
-      required: true
-    - label: I have verified that the included Python and CSS code are correct.
-      required: true
+  - type: checkboxes
+    id: double-checked
+    attributes:
+      options:
+        - label: I have checked the [documentation]() for info relevant to my issue.
+          required: true
+        - label: I have verified that the included Python and CSS code are correct.
+          required: true
