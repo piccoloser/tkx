@@ -37,7 +37,7 @@ body:
     attributes:
       label: Can you help further?
       options:
-        - label: I am willing to help further with this issue.
-        - label: I only want to bring attention to this issue.
+        - I am willing to help further with this issue.
+        - I only want to bring attention to this issue.
     validations:
       required: true
