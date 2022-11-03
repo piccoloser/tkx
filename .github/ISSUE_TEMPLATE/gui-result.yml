@@ -11,10 +11,10 @@ body:
     required: true
 - type: textarea
   id: actual
-    attributes:
+  attributes:
       label: Actual Behavior
       description: What was wrong with the resulting widget(s)?
-    validations:
+  validations:
       required: true
 - type: checkboxes
 id: double-checked
