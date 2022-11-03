@@ -35,5 +35,5 @@ body:
   - type: checkboxes
     id: willing-to-help
     attributes:
-      label: Before Submitting
-      description: Would you be able or willing to help further on this issue by contributing or providing more details if needed?
+      options:
+        - label: Would you be able or willing to help further on this issue by contributing or providing more details if needed?
