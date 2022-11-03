@@ -17,10 +17,10 @@ body:
     validations:
       required: true
   - type: checkboxes
-    id: double-checked
-    label: Verify Before Submitting
+  id: double-checked
+  attributes:
     options:
-      - label: I have checked the [documentation](https://piccoloser.github.io/tkx/#documentation) for relevant information about my issue.
+        - label: I have checked the [documentation](https://piccoloser.github.io/tkx/#documentation) for relevant information about my issue.
         required: true
-      - label: I have verified that the included Python and CSS code are correct.
+        - label: I have verified that the included Python and CSS code are correct.
         required: true
