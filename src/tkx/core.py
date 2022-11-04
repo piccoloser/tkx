@@ -1,11 +1,12 @@
 from __future__ import annotations
 from tkinter import Widget
-from typing import Any, Callable
+from typing import Any, Callable, Literal
 from tkx.constants import (
     CSS_PROPERTY_NAME_TRANSLATIONS,
     INHERITED_PROPERTIES,
     NON_STYLE_CONFIG_OPTIONS,
 )
+from tkx.error import InvalidDisplayError
 import re
 
 
@@ -15,6 +16,8 @@ translate_css = lambda x: CSS_PROPERTY_NAME_TRANSLATIONS.get(x)
 class TkxElement:
     def __init__(self):
         super().__init__()
+        self.__display: Literal["block", "flex", "grid", "none"] = "block"
+        self.__parent: TkxElement | None = None
         self.__style: dict[str, str] | None = None
         self.__widget: Widget | None = None
 
@@ -45,13 +48,22 @@ class TkxElement:
         element = Element(widget, self, **kwargs)
         self.elements.append(element)
 
-        element.widget.pack()
+        self.add_element(element)
 
         return element
 
-    def get_style_of(
-        self, name: str, fallback: str | None = None
-    ) -> dict[str, str] | None:
+    def add_element(self, element):
+        if self.display == "block":
+            element.widget.pack(fill="x")
+            return
+
+        if self.display == "flex":
+            element.widget.grid(row=0, column=len(self.elements))
+            return
+
+        raise NotImplementedError()
+
+    def get_style_of(self, name: str, fallback: str | None = None) -> dict[str, str] | None:
         """
         Returns the style dictionary associated with the given name if it
         can be found in the root window's stylesheet. Accepts an optional
@@ -64,11 +76,7 @@ class TkxElement:
         Returns `None` if no style is found.
         """
         if self.parent is not None:
-            return (
-                self.parent.get_style_of(name)
-                or self.parent.get_style_of(fallback)
-                or None
-            )
+            return self.parent.get_style_of(name) or self.parent.get_style_of(fallback) or None
 
         if self.stylesheet is None:
             return None
@@ -86,6 +94,27 @@ class TkxElement:
                     continue
 
                 self.style[translate_css(p)] = self.parent.style.get(translate_css(p))
+
+    @property
+    def display(self) -> Literal["block", "flex", "grid", "none"]:
+        return self.__display
+
+    @display.setter
+    def display(self, value: Literal["block", "flex", "grid", "none"]) -> None:
+        if value not in {"block", "flex", "grid", "none"}:
+            raise InvalidDisplayError(
+                f'"{value}" is not a valid value. Expected one of ("block", "flex", "grid", or "none")'
+            )
+
+        self.__display = value
+
+    @property
+    def parent(self) -> TkxElement:
+        return self.__parent
+
+    @parent.setter
+    def parent(self, value: TkxElement) -> None:
+        self.__parent = value
 
     @property
     def root(self):
@@ -215,9 +244,7 @@ def update_style(fn):
         self.style.update(kwargs)
 
         # Remove keys not associated with style.
-        self.style = dict(
-            filter(lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS, self.style.items())
-        )
+        self.style = dict(filter(lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS, self.style.items()))
 
         # Call the original configure method.
         fn(self, **kwargs)

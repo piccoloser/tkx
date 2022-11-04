@@ -11,8 +11,12 @@ class Element(TkxElement):
         # CSS id and class values. None if not provided.
         self.id = kwargs.pop("id", None)
         self.cl = kwargs.pop("cl", None)
+
+        explicit_display: bool = "display" in kwargs.keys()
+        self.display = kwargs.pop("display", "block")
         other_kwargs = dict()
 
+        # Handle keyword arguments tkinter doesn't recognize.
         if widget is tk.Frame:
             for k in INVALID_CONTAINER_PROPERTIES:
                 value = kwargs.pop(k, None)
@@ -46,12 +50,13 @@ class Element(TkxElement):
         self.style = self.get_style_of(widget.__name__, fallback) or dict()
         self.style.update(other_kwargs)
 
+        if explicit_display:
+            self.style["display"] = self.display
+
         if self.id is not None:
             # Raise an error if an element with this id already exists.
             if self.root.ids.get(self.id):
-                raise DuplicateIdError(
-                    f'An element with id "{self.id}" already exists.'
-                )
+                raise DuplicateIdError(f'An element with id "{self.id}" already exists.')
 
             # If no error is raised, add this id and Element.
             self.root.ids[self.id] = self
@@ -77,10 +82,12 @@ class Element(TkxElement):
     @update_style
     def configure(self, **kwargs):
         """Configure properties of an `Element` and its widget."""
-        for p in ("cl", "id"):
-            self[p] = kwargs.pop(p, None)
+        for k in ("cl", "display", "id"):
+            value = kwargs.pop(k, None)
+            if value is not None:
+                setattr(self, k, value)
 
-        if self.widget_name == "frame":
+        if "frame" in self.widget_name:
             kwargs.pop("fg", None)
 
         self.widget.configure(**kwargs)
