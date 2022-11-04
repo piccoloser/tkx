@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Hunter Logan <_@piccoloser.com>"]
 readme = "README.md"
+packages = [{include = "tkx", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
