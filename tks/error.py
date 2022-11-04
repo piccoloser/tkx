@@ -1,2 +1,0 @@
-class DuplicateIdError(Exception):
-    pass
