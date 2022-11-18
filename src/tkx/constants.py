@@ -5,6 +5,7 @@ CSS_PROPERTY_NAME_TRANSLATIONS = {
     "border-style": "relief",
     "border-width": "bd",
     "color": "fg",
+    "column-count": "column_count",
 }
 
 # Supported properties which inherit from

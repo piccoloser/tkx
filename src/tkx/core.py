@@ -52,13 +52,29 @@ class TkxElement:
 
         return element
 
-    def add_element(self, element):
+    def add_element(self, element, **kwargs):
         if self.display == "block":
-            element.widget.pack(fill="x")
+            element.widget.pack(fill="x", **kwargs)
             return
 
         if self.display == "flex":
-            element.widget.grid(row=0, column=len(self.elements))
+            element.widget.grid(row=0, column=len(self.elements), **kwargs)
+            return
+
+        if self.display == "grid":
+            try:
+                element.widget.grid(
+                    row=(len(self.elements) - 1) // int(self.column_count),
+                    column=(len(self.elements) - 1) % int(self.column_count),
+                    **kwargs,
+                )
+
+            except AttributeError as e:
+                raise InvalidDisplayError(
+                    f'Error creating element with id "{self.id}" and class "{self.cl}": {e}\n'
+                    "CSS display: grid cannot be declared without also declaring CSS column-count."
+                )
+
             return
 
         raise NotImplementedError()

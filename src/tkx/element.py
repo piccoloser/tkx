@@ -43,8 +43,8 @@ class Element(TkxElement):
             self.widget = widget(self.parent, **kwargs)
 
         fallback: str | None = None
-        if self.widget_name == "frame":
-            self.widget.pack_propagate(0)
+        # if self.widget_name == "frame":
+        #     self.widget.pack_propagate(0)
 
         # Style the element from its selector or the fallback.
         self.style = self.get_style_of(widget.__name__, fallback) or dict()
@@ -82,7 +82,7 @@ class Element(TkxElement):
     @update_style
     def configure(self, **kwargs):
         """Configure properties of an `Element` and its widget."""
-        for k in ("cl", "display", "id"):
+        for k in ("cl", "column_count", "display", "id"):
             value = kwargs.pop(k, None)
             if value is not None:
                 setattr(self, k, value)
