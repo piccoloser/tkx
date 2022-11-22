@@ -1,17 +1,13 @@
 from __future__ import annotations
 from typing import Generator
 from tkx.constants import INVALID_CONTAINER_PROPERTIES
-from tkx.core import TkxElement, translate_css, update_style
+from tkx.core import TkxElement, translate_css, update_element, update_style
 from tkx.error import DuplicateIdError
 import tkinter as tk
 
 
 class Element(TkxElement):
     def __init__(self, widget: tk.Widget, parent: tk.Widget, **kwargs):
-        # CSS id and class values. None if not provided.
-        self.id = kwargs.pop("id", None)
-        self.cl = kwargs.pop("cl", None)
-
         explicit_display: bool = "display" in kwargs.keys()
         self.display = kwargs.pop("display", "block")
         other_kwargs = dict()
@@ -22,6 +18,8 @@ class Element(TkxElement):
                 value = kwargs.pop(k, None)
                 if value is not None:
                     other_kwargs[translate_css(k)] = value
+
+        kwargs = update_element(self, **kwargs)
 
         # List of direct children of this Element.
         self.elements: list[Element] | None = None
@@ -43,8 +41,6 @@ class Element(TkxElement):
             self.widget = widget(self.parent, **kwargs)
 
         fallback: str | None = None
-        # if self.widget_name == "frame":
-        #     self.widget.pack_propagate(0)
 
         # Style the element from its selector or the fallback.
         self.style = self.get_style_of(widget.__name__, fallback) or dict()
@@ -52,6 +48,7 @@ class Element(TkxElement):
 
         if explicit_display:
             self.style["display"] = self.display
+            print(self.display)
 
         if self.id is not None:
             # Raise an error if an element with this id already exists.
@@ -82,10 +79,7 @@ class Element(TkxElement):
     @update_style
     def configure(self, **kwargs):
         """Configure properties of an `Element` and its widget."""
-        for k in ("cl", "column_count", "display", "id"):
-            value = kwargs.pop(k, None)
-            if value is not None:
-                setattr(self, k, value)
+        kwargs = update_element(self, **kwargs)
 
         if "frame" in self.widget_name:
             kwargs.pop("fg", None)

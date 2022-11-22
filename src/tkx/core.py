@@ -3,6 +3,8 @@ from tkinter import Widget
 from typing import Any, Callable, Literal
 from tkx.constants import (
     CSS_PROPERTY_NAME_TRANSLATIONS,
+    CSS_PROPERTY_VALUE_TRANSLATIONS,
+    ELEMENT_ONLY_PROPERTIES,
     INHERITED_PROPERTIES,
     NON_STYLE_CONFIG_OPTIONS,
 )
@@ -45,39 +47,13 @@ class TkxElement:
             self.elements = []
 
         kwargs = parse_css_kwargs(self, **kwargs)
+
         element = Element(widget, self, **kwargs)
         self.elements.append(element)
 
-        self.add_element(element)
+        self.set_widget(element)
 
         return element
-
-    def add_element(self, element, **kwargs):
-        if self.display == "block":
-            element.widget.pack(fill="x", **kwargs)
-            return
-
-        if self.display == "flex":
-            element.widget.grid(row=0, column=len(self.elements), **kwargs)
-            return
-
-        if self.display == "grid":
-            try:
-                element.widget.grid(
-                    row=(len(self.elements) - 1) // int(self.column_count),
-                    column=(len(self.elements) - 1) % int(self.column_count),
-                    **kwargs,
-                )
-
-            except AttributeError as e:
-                raise InvalidDisplayError(
-                    f'Error creating element with id "{self.id}" and class "{self.cl}": {e}\n'
-                    "CSS display: grid cannot be declared without also declaring CSS column-count."
-                )
-
-            return
-
-        raise NotImplementedError()
 
     def get_style_of(self, name: str, fallback: str | None = None) -> dict[str, str] | None:
         """
@@ -110,6 +86,33 @@ class TkxElement:
                     continue
 
                 self.style[translate_css(p)] = self.parent.style.get(translate_css(p))
+
+    def set_widget(self, element, **kwargs):
+        if "label" in element.widget_name:
+            if self.text_anchor is not None:
+                element.widget.configure(anchor=self.text_anchor)
+
+        if self.parent is not None:
+            if self.parent.display == "flex":
+                element.widget.grid(row=0, column=len(self.elements), **kwargs)
+                return
+
+            elif self.display == "grid":
+                try:
+                    element.widget.grid(
+                        row=(len(self.elements) - 1) // int(self.column_count),
+                        column=(len(self.elements) - 1) % int(self.column_count),
+                        **kwargs,
+                    )
+                    return
+
+                except AttributeError as e:
+                    raise InvalidDisplayError(
+                        f'Error creating element with id "{self.id}" and class "{self.cl}": {e}\n'
+                        "CSS display: grid cannot be declared without also declaring CSS column-count."
+                    )
+
+        element.widget.pack(fill="x", **kwargs)
 
     @property
     def display(self) -> Literal["block", "flex", "grid", "none"]:
@@ -188,22 +191,70 @@ def parse_css_kwargs(obj, **kwargs) -> dict[str, str]:
     Parse a set of keyword arguments as though they were
     CSS variables. Possible values include:
     * Percent values (`width: 50%` -> `width={self.parent|root}.width / 2`)
+    * Values with direct CSS->Tcl translations (`left` -> `w`, `right` -> `e`)
+        * Some options are specific to tkx, including `top-left` ->
     """
+    if kwargs.pop("padding", None) is not None:
+        translate_padding(obj, kwargs)
+
     for k, v in kwargs.items():
-        if "%" in str(v):
-            percent = float(v.replace("%", ""))
+        if "%" in v:
+            translate_percent(obj, k, v, kwargs)
 
-            if obj.parent is not None:
-                target = obj.parent
-
-            else:
-                target = obj.root
-
-            amount = float(target.style[k])
-            total = float(amount / 100) * percent
-            kwargs[k] = str(int(total))
+    kwargs = {k: CSS_PROPERTY_VALUE_TRANSLATIONS.get(v) or v for k, v in kwargs.items()}
 
     return obj.root.stylesheet.format_properties(kwargs)
+
+
+def translate_padding(obj, kwargs):
+    values = kwargs["padding"].split(" ")
+
+    if len(values) == 1:
+        kwargs["padx"] = kwargs["pady"] = values[0]
+
+    elif len(values) == 2:
+        kwargs["padx"], kwargs["pady"] = values
+
+    elif len(values) == 3:
+        kwargs["padx"] = (values[0], values[2])
+        kwargs["pady"] = values[1]
+
+    elif len(values) == 4:
+        kwargs["padx"] = (values[0], values[2])
+        kwargs["pady"] = (values[1], values[3])
+
+    else:
+        raise ValueError(f"Too many padding values specified for {obj}")
+
+
+def translate_percent(obj, k, v, kwargs):
+    percent = float(v.replace("%", ""))
+
+    if obj.parent is not None:
+        target = obj.parent
+
+    else:
+        target = obj.root
+
+    if target.display == "grid" and k == "width":
+        amount = float(target.column_width)
+    else:
+        if target.style.get(k) is None and k == "width":
+            amount = target.winfo_width()
+
+        else:
+            amount = float(target.style[k])
+
+    total = float(amount / 100) * percent
+    kwargs[k] = str(int(total))
+
+
+def update_element(element, **kwargs) -> dict[str, Any]:
+    for property, default in ELEMENT_ONLY_PROPERTIES.items():
+        value = kwargs.pop(property, default)
+        setattr(element, property, value)
+
+    return kwargs
 
 
 def update_style(fn):
@@ -258,6 +309,8 @@ def update_style(fn):
         kwargs = parse_css_kwargs(self, **kwargs)
 
         self.style.update(kwargs)
+
+        update_element(self, **self.style)
 
         # Remove keys not associated with style.
         self.style = dict(filter(lambda i: i[0] not in NON_STYLE_CONFIG_OPTIONS, self.style.items()))
