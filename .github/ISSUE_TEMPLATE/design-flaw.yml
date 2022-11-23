@@ -1,0 +1,36 @@
+name: Design Flaw / Ease of Use
+description: Something can't be done without bad coding practices.
+labels: [design]
+body: 
+  - type: textarea
+    id: desired
+    attributes:
+      label: Desired Result
+      description: What are you trying to do?
+    validations:
+      required: true
+  - type: textarea
+    id: process
+    attributes:
+      label: Required Steps
+      description: What do you need to do in order to make it happen?
+    validations:
+      required: true
+  - type: dropdown
+    id: introduces-bugs
+    attributes:
+      label: Does it introduce bugs?
+      description: Is this practice likely to introduce bugs or interfere with anything else?
+      options:
+        - 'Yes'
+        - 'No'
+        - 'Not Sure'
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: How do you think it should work?
+      description: Please include at least one pseudo-code example.
+    validations:
+      required: true
