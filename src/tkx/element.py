@@ -48,21 +48,10 @@ class Element(TkxElement):
 
         if explicit_display:
             self.style["display"] = self.display
-            print(self.display)
 
-        if self.id is not None:
-            # Raise an error if an element with this id already exists.
-            if self.root.ids.get(self.id):
-                raise DuplicateIdError(f'An element with id "{self.id}" already exists.')
-
-            # If no error is raised, add this id and Element.
-            self.root.ids[self.id] = self
-
-            # Style the element from its id selector.
-            self.style.update(self.get_style_of(f"#{self.id}", widget.__name__))
-
-        # Apply one or more classes if applicable.
+        self.parse_id(widget.__name__)
         self.parse_cl()
+        self.display = self.style.get("display", self.display)
 
         # Configure with values from CSS stylesheet.
         self.inherit_style()
@@ -103,7 +92,7 @@ class Element(TkxElement):
         # Return the root.
         yield ref
 
-    def parse_cl(self):
+    def parse_cl(self) -> None:
         """Apply CSS classes in the given order."""
 
         # If no classes are supplied, exit.
@@ -126,3 +115,15 @@ class Element(TkxElement):
 
             # Update the relevant style properties.
             self.style.update(cl_dict)
+
+    def parse_id(self, fallback) -> None:
+        if self.id is not None:
+            # Raise an error if an element with this id already exists.
+            if self.root.ids.get(self.id):
+                raise DuplicateIdError(f'An element with id "{self.id}" already exists.')
+
+            # If no error is raised, add this id and Element.
+            self.root.ids[self.id] = self
+
+            # Style the element from its id selector.
+            self.style.update(self.get_style_of(f"#{self.id}", fallback))
