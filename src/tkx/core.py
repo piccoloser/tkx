@@ -46,9 +46,11 @@ class TkxElement:
         if self.elements is None:
             self.elements = []
 
-        kwargs = parse_css_kwargs(self, **kwargs)
+        if self.root.stylesheet is not None:
+            kwargs = parse_css_kwargs(self, **kwargs)
 
         element = Element(widget, self, **kwargs)
+
         self.elements.append(element)
 
         self.set_widget(element)
@@ -92,27 +94,28 @@ class TkxElement:
             if self.text_anchor is not None:
                 element.widget.configure(anchor=self.text_anchor)
 
-        if self.parent is not None:
-            if self.parent.display == "flex":
-                element.widget.grid(row=0, column=len(self.elements), **kwargs)
-                return
+        if self.parent is None or self.display == "block":
+            element.widget.pack(fill="x", **kwargs)
 
-            elif self.display == "grid":
-                try:
-                    element.widget.grid(
-                        row=(len(self.elements) - 1) // int(self.column_count),
-                        column=(len(self.elements) - 1) % int(self.column_count),
-                        **kwargs,
-                    )
-                    return
+        elif self.display == "flex":
+            element.widget.grid(row=0, column=len(self.elements), **kwargs)
 
-                except AttributeError as e:
-                    raise InvalidDisplayError(
-                        f'Error creating element with id "{self.id}" and class "{self.cl}": {e}\n'
-                        "CSS display: grid cannot be declared without also declaring CSS column-count."
-                    )
+        elif self.display == "grid":
+            try:
+                element.widget.grid(
+                    row=(len(self.elements) - 1) // int(self.column_count),
+                    column=(len(self.elements) - 1) % int(self.column_count),
+                    **kwargs,
+                )
 
-        element.widget.pack(fill="x", **kwargs)
+            except AttributeError as e:
+                raise InvalidDisplayError(
+                    f'Error creating element with id "{self.id}" and class "{self.cl}": {e}\n'
+                    "CSS display: grid cannot be declared without also declaring CSS column-count."
+                )
+
+        else:
+            raise NotImplementedError()
 
     @property
     def display(self) -> Literal["block", "flex", "grid", "none"]:
@@ -175,7 +178,7 @@ class TkxElement:
 
     def __getattr__(self, attr: str) -> Any | None:
         # If no attribute is found in self, check self.widget.
-        if self[attr] is None and self.widget is not None:
+        if self[attr] is None and self["widget"] is not None:
             return getattr(self.widget, attr)
         return self[attr]
 
@@ -250,8 +253,19 @@ def translate_percent(obj, k, v, kwargs):
 
 
 def update_element(element, **kwargs) -> dict[str, Any]:
+    """
+    Set the attributes specific to an `Element` based on keyword arguments.
+
+    Returns the altered keyword arguments.
+    """
     for property, default in ELEMENT_ONLY_PROPERTIES.items():
         value = kwargs.pop(property, default)
+
+        # Prevent defaults from overriding explicitly set values.
+        current = getattr(element, property)
+        if current is not None and current != value:
+            continue
+
         setattr(element, property, value)
 
     return kwargs

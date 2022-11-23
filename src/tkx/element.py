@@ -1,55 +1,32 @@
 from __future__ import annotations
 from typing import Generator
-from tkx.constants import INVALID_CONTAINER_PROPERTIES
-from tkx.core import TkxElement, translate_css, update_element, update_style
+from tkx.constants import ELEMENT_ONLY_PROPERTIES, INVALID_CONTAINER_PROPERTIES
+from tkx.core import TkxElement, update_element, update_style
 from tkx.error import DuplicateIdError
 import tkinter as tk
 
 
 class Element(TkxElement):
     def __init__(self, widget: tk.Widget, parent: tk.Widget, **kwargs):
-        explicit_display: bool = "display" in kwargs.keys()
-        self.display = kwargs.pop("display", "block")
-        other_kwargs = dict()
-
-        # Handle keyword arguments tkinter doesn't recognize.
-        if widget is tk.Frame:
-            for k in INVALID_CONTAINER_PROPERTIES:
-                value = kwargs.pop(k, None)
-                if value is not None:
-                    other_kwargs[translate_css(k)] = value
-
         kwargs = update_element(self, **kwargs)
+        parsed_kwargs = self.parse_kwargs(kwargs)
 
         # List of direct children of this Element.
         self.elements: list[Element] | None = None
 
         # Object to which this Element is added.
         self.parent = parent
-        self.__iter_parent = self.parent
+        self.__iter_parent = parent  #! remove 'self'?
 
-        # Use self.parent's widget attribute as the parent of self.widget.
-        # Elements by themselves do not have the tk attribute which
-        # tkinter requires for a widget to be added to another object.
-        if self.parent.widget is not None:
-            self.widget = widget(self.parent.widget, **kwargs)
-
-        # If self.parent has no widget attribute, it is assumed that it
-        # is a Window, which directly inherits the tk attribute from its
-        # superclass (tk.Tk).
-        else:
-            self.widget = widget(self.parent, **kwargs)
+        self.widget = widget(self.parent.widget, parsed_kwargs)
 
         fallback: str | None = None
 
         # Style the element from its selector or the fallback.
         self.style = self.get_style_of(widget.__name__, fallback) or dict()
-        self.style.update(other_kwargs)
+        self.style.update(self.parse_kwargs(kwargs))
 
-        if explicit_display:
-            self.style["display"] = self.display
-
-        self.parse_id(widget.__name__)
+        self.parse_id(widget.__name__)  #! Update escape clause?
         self.parse_cl()
         self.display = self.style.get("display", self.display)
 
@@ -59,7 +36,7 @@ class Element(TkxElement):
 
         # Reconfigure the widget with any provided keyword arguments.
         if kwargs:
-            self.configure(kwargs)
+            self.configure(parsed_kwargs)
 
     def bind(self, *args):
         """Bind an event and handler to an `Element`'s widget."""
@@ -127,3 +104,8 @@ class Element(TkxElement):
 
             # Style the element from its id selector.
             self.style.update(self.get_style_of(f"#{self.id}", fallback))
+
+    def parse_kwargs(self, kwargs) -> None:
+        return {
+            k: v for k, v in kwargs.items() if k in zip(INVALID_CONTAINER_PROPERTIES, ELEMENT_ONLY_PROPERTIES.keys())
+        }
