@@ -88,3 +88,43 @@ STYLE_CONFIG_OPTIONS: set[str] = {
     "pady",
     "width",
 }
+
+TK_PROPERTIES: list[str] = [
+    "background",
+    "bd",
+    "bg",
+    "borderwidth",
+    "class",
+    "colormap",
+    "command",
+    "container",
+    "cursor",
+    "default",
+    "from_",
+    "height",
+    "highlightbackground",
+    "highlightcolor",
+    "highlightthickness",
+    "padx",
+    "pady",
+    "relief",
+    "repeatdelay",
+    "repeatinterval",
+    "takefocus",
+    "text",
+    "textvariable",
+    "to",
+    "visual",
+    "width",
+]
+
+# Properties which are only used by objects that inherit from TkxElement.
+TKX_PROPERTIES: list[str] = [
+    "cl",
+    "color",
+    "column_count",
+    "column_width",
+    "display",
+    "id",
+    "text_anchor-",
+]

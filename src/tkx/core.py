@@ -4,9 +4,8 @@ from tkx.constants import (
     CSS_PROPERTY_NAME_TRANSLATIONS,
     CSS_PROPERTY_VALUE_TRANSLATIONS,
     ELEMENT_ONLY_PROPERTIES,
-    INVALID_CONTAINER_PROPERTIES,
-    NON_STYLE_CONFIG_OPTIONS,
-    STYLE_CONFIG_OPTIONS,
+    TK_PROPERTIES,
+    TKX_PROPERTIES,
 )
 from tkx.error import InvalidDisplayError
 from typing import Any, Callable, Literal
@@ -35,6 +34,7 @@ class TkxElement:
 
     def __setitem__(self, key: str, value: Any) -> None:
         self.__dict__[key] = value
+        setattr(self, key, value)
 
     def add(self, widget: Widget, **kwargs) -> None:
         from tkx.element import Element
@@ -42,7 +42,7 @@ class TkxElement:
         if self.elements is None:
             self.elements = []
 
-        element = Element(widget, self, **self.parse_tk_args(kwargs))
+        element = Element(widget, self, **kwargs)
 
         self.elements.append(element)
 
@@ -86,13 +86,11 @@ class TkxElement:
     def parent(self, value: TkxElement) -> None:
         self.__parent = value
 
-    def parse_kwargs(self, kwargs) -> dict[str, Any]:
-        return {
-            k: v for k, v in kwargs.items() if k in zip(INVALID_CONTAINER_PROPERTIES, ELEMENT_ONLY_PROPERTIES.keys())
-        }
+    def parse_tk_properties(self, kwargs) -> dict[str, Any]:
+        return {k: v for k, v in kwargs.items() if k in TK_PROPERTIES}
 
-    def parse_tk_args(self, kwargs) -> dict[str, Any]:
-        return {k: v for k, v in kwargs.items() if k in zip(NON_STYLE_CONFIG_OPTIONS, STYLE_CONFIG_OPTIONS)}
+    def parse_tkx_properties(self, kwargs) -> dict[str, str]:
+        return {k: v for k, v in kwargs.items() if k in TKX_PROPERTIES}
 
     @property
     def root(self) -> TkxElement:
@@ -104,7 +102,7 @@ class TkxElement:
             if self.text_anchor is not None:
                 element.widget.configure(anchor=self.text_anchor)
 
-        if self.parent is None or self.display == "block":
+        if self.display == "block":
             element.widget.pack(fill="x", **kwargs)
 
         elif self.display == "flex":
@@ -114,17 +112,19 @@ class TkxElement:
             try:
                 element.widget.grid(
                     row=(len(self.elements) - 1) // int(self.column_count),
-                    column=(len(self.element) - 1) % int(self.column_count),
+                    column=(len(self.elements) - 1) % int(self.column_count),
                     **kwargs,
                 )
 
-            except AttributeError as e:
+            except (AttributeError, TypeError) as e:
                 raise InvalidDisplayError(
+                    f"Error: {e}\n"
                     f'Error creating element with id "{self.id}" and class "{self.cl}": {e}\n'
                     "CSS display: grid cannot be declared without also declaring CSS column-count."
                 )
 
         else:
+            print(element.widget_name, self.color, self.parent, self.parent is None, self.display)
             raise NotImplementedError()
 
     @property
@@ -137,11 +137,6 @@ class TkxElement:
     @style.setter
     def style(self, value: dict[str, str] | None) -> None:
         self.__style = value
-
-    @property
-    def tk_args(self) -> dict[str, Any]:
-        """Returns the tk-specific arguments passed to this element."""
-        return self.__tk_args
 
     @property
     def widget(self) -> Widget | None:
